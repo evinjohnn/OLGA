@@ -14,7 +14,7 @@ const Navbar = () => {
       }
       
       // Determine active section based on scroll position
-      const sections = ['home', 'about', 'products', 'blog', 'contact'];
+      const sections = ['home', 'about', 'products', 'contact'];
       const currentSection = sections.find(section => {
         const element = document.getElementById(section);
         if (!element) return false;
@@ -50,16 +50,18 @@ const Navbar = () => {
   return (
     <nav 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'py-3 backdrop-blur-sm' : 'bg-transparent py-6'
+        scrolled ? 'py-3 bg-gray-900/90 backdrop-blur-sm' : 'bg-gray-900/80 py-4'
       }`}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
-        <div className="flex space-x-10 text-white font-light">
+        <div className="flex space-x-8 text-white">
           <a 
             href="#home" 
             onClick={(e) => scrollToSection(e, 'home')}
-            className={`hover:text-white transition-all duration-300 ${
-              activeSection === 'home' ? 'text-white' : 'text-white/80'
+            className={`px-5 py-2 transition-all duration-300 rounded-full ${
+              activeSection === 'home' 
+                ? 'border border-white/30 bg-white/5 text-white' 
+                : 'text-white/80 hover:text-white'
             }`}
           >
             Home
@@ -67,8 +69,10 @@ const Navbar = () => {
           <a 
             href="#about" 
             onClick={(e) => scrollToSection(e, 'about')}
-            className={`hover:text-white transition-all duration-300 ${
-              activeSection === 'about' ? 'text-white' : 'text-white/80'
+            className={`px-5 py-2 transition-all duration-300 rounded-full ${
+              activeSection === 'about' 
+                ? 'border border-white/30 bg-white/5 text-white' 
+                : 'text-white/80 hover:text-white'
             }`}
           >
             About Us
@@ -76,28 +80,21 @@ const Navbar = () => {
           <a 
             href="#products" 
             onClick={(e) => scrollToSection(e, 'products')}
-            className={`hover:text-white transition-all duration-300 ${
-              activeSection === 'products' ? 'text-white' : 'text-white/80'
+            className={`px-5 py-2 transition-all duration-300 rounded-full ${
+              activeSection === 'products' 
+                ? 'border border-white/30 bg-white/5 text-white' 
+                : 'text-white/80 hover:text-white'
             }`}
           >
-            Our Products
-          </a>
-          <a 
-            href="#blog" 
-            onClick={(e) => scrollToSection(e, 'blog')}
-            className={`hover:text-white transition-all duration-300 ${
-              activeSection === 'blog' ? 'text-white' : 'text-white/80'
-            }`}
-          >
-            Blog
+            Our Product
           </a>
         </div>
         <Button 
           onClick={(e) => scrollToSection(e as any, 'contact')}
-          className="text-white font-normal hover:bg-white/10 transition-all duration-300 rounded-md px-5 py-1"
-          variant="ghost"
+          className="text-white font-normal bg-blue-500 hover:bg-blue-600 transition-all duration-300 rounded-full px-6 py-2"
+          variant="default"
         >
-          Register
+          Register Now →
         </Button>
       </div>
     </nav>

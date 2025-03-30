@@ -3,7 +3,6 @@ import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
 import AboutSection from "../components/AboutSection";
 import ProductsSection from "../components/ProductsSection";
-import BlogSection from "../components/BlogSection";
 import ContactSection from "../components/ContactSection";
 import Footer from "../components/Footer";
 
@@ -14,7 +13,6 @@ const Home: FC = () => {
       <HeroSection />
       <AboutSection />
       <ProductsSection />
-      <BlogSection />
       <ContactSection />
       <Footer />
     </div>
