@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from "../components/ui/button";
 
@@ -64,6 +64,57 @@ const solarPanels: Product[] = [
 
 const ProductsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Add auto scrolling animation
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    let animationId: number;
+    let isPaused = false;
+    let startX = 0;
+    
+    const scrollSpeed = 0.5; // pixels per frame
+    let currentScrollPosition = 0;
+    
+    const animate = () => {
+      if (!isPaused && container) {
+        currentScrollPosition += scrollSpeed;
+        if (currentScrollPosition >= container.scrollWidth - container.clientWidth) {
+          currentScrollPosition = 0;
+        }
+        container.scrollLeft = currentScrollPosition;
+      }
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    // Start animation
+    animationId = requestAnimationFrame(animate);
+    
+    // Pause on hover/touch
+    const handleMouseEnter = () => { isPaused = true; };
+    const handleMouseLeave = () => { isPaused = false; };
+    const handleTouchStart = (e: TouchEvent) => {
+      isPaused = true;
+      startX = e.touches[0].pageX;
+    };
+    const handleTouchEnd = () => {
+      isPaused = false;
+    };
+    
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchend', handleTouchEnd);
+    
+    return () => {
+      cancelAnimationFrame(animationId);
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, []);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -89,7 +140,7 @@ const ProductsSection = () => {
           {/* Navigation arrows */}
           <button 
             onClick={scrollLeft}
-            className="absolute -left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-100"
+            className="absolute -left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-100 transition-transform duration-300 hover:scale-110"
             aria-label="Scroll left"
           >
             <ChevronLeft className="h-6 w-6 text-sky-600" />
@@ -97,7 +148,7 @@ const ProductsSection = () => {
           
           <button 
             onClick={scrollRight}
-            className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-100"
+            className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-100 transition-transform duration-300 hover:scale-110"
             aria-label="Scroll right"
           >
             <ChevronRight className="h-6 w-6 text-sky-600" />
@@ -112,13 +163,13 @@ const ProductsSection = () => {
             {solarPanels.map((panel) => (
               <div 
                 key={panel.id}
-                className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start"
+                className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="h-48 overflow-hidden">
                   <img 
                     src={panel.image} 
                     alt={panel.name} 
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 <div className="p-6">
@@ -135,7 +186,7 @@ const ProductsSection = () => {
                     <span className="text-xl font-bold text-sky-600">{panel.price}</span>
                     <Button 
                       size="sm" 
-                      className="bg-sky-600 hover:bg-sky-700"
+                      className="bg-sky-600 hover:bg-sky-700 transition-all duration-300 transform hover:scale-105"
                     >
                       Learn More
                     </Button>
