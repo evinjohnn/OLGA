@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getQueryFn } from '@/lib/queryClient';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getQueryFn, apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +8,32 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// Define the login form schema
+const loginFormSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required")
+});
+
+type LoginFormValues = z.infer<typeof loginFormSchema>;
+
+// Admin user type
+interface AdminUser {
+  id: number;
+  username: string;
+  isAdmin: boolean;
+}
+
+// Login response type
+interface LoginResponse {
+  success: boolean;
+  data: AdminUser;
+}
 
 // Define the Contact Submission type based on our schema
 interface ContactSubmission {
@@ -15,6 +41,7 @@ interface ContactSubmission {
   name: string;
   email: string;
   phone: string;
+  place: string;
   message: string;
   createdAt: string;
 }
@@ -27,11 +54,84 @@ interface ContactSubmissionResponse {
 
 const AdminDashboard = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authHeader, setAuthHeader] = useState<string | null>(null);
   
-  // Fetch submissions data
+  // Login form
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      username: "",
+      password: ""
+    }
+  });
+  
+  // Login mutation
+  const loginMutation = useMutation({
+    mutationFn: async (data: LoginFormValues) => {
+      return await apiRequest({
+        url: '/api/admin/login',
+        method: 'POST',
+        body: data,
+      });
+    },
+    onSuccess: (data: any) => {
+      if (data && data.success) {
+        // Create basic auth header
+        const authHeader = `Basic ${btoa(`${form.getValues().username}:${form.getValues().password}`)}`;
+        setAuthHeader(authHeader);
+        setIsAuthenticated(true);
+        toast({
+          title: "Login successful",
+          description: "Welcome to the admin dashboard",
+        });
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid credentials. Please try again.",
+          variant: "destructive",
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Login failed",
+        description: error.message || "Invalid credentials. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Handle login form submission
+  const onSubmit = (data: LoginFormValues) => {
+    loginMutation.mutate(data);
+  };
+  
+  // Fetch submissions data with auth header
   const { data, isLoading, isError, refetch } = useQuery<ContactSubmissionResponse | null>({
     queryKey: ['/api/admin/contact-submissions'],
-    queryFn: getQueryFn<ContactSubmissionResponse | null>({ on401: 'returnNull' }),
+    queryFn: async ({ signal }) => {
+      if (!isAuthenticated || !authHeader) return null;
+      
+      const response = await fetch('/api/admin/contact-submissions', {
+        headers: {
+          'Authorization': authHeader,
+        },
+        signal,
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          setIsAuthenticated(false);
+          return null;
+        }
+        throw new Error('Failed to fetch data');
+      }
+      
+      return response.json();
+    },
+    enabled: isAuthenticated,
   });
   
   const contactSubmissions = data?.data || [];
@@ -59,6 +159,70 @@ const AdminDashboard = () => {
     }
   }, [isError, toast]);
 
+  // Login form component
+  const LoginForm = () => {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-sky-600">OLGA Solar Admin</CardTitle>
+            <CardDescription>
+              Please login to access the admin dashboard
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input 
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  {...form.register("username")}
+                />
+                {form.formState.errors.username && (
+                  <p className="text-sm text-red-500">{form.formState.errors.username.message}</p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input 
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  {...form.register("password")}
+                />
+                {form.formState.errors.password && (
+                  <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
+                )}
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-sky-600 hover:bg-sky-700"
+                disabled={loginMutation.isPending}
+              >
+                {loginMutation.isPending ? "Logging in..." : "Login"}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <Link href="/">
+              <Button variant="link">Back to Homepage</Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  };
+
+  // Render login form if not authenticated
+  if (!isAuthenticated) {
+    return <LoginForm />;
+  }
+
+  // Render dashboard if authenticated
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin Header */}
@@ -79,6 +243,15 @@ const AdminDashboard = () => {
               onClick={() => refetch()}
             >
               Refresh Data
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => {
+                setIsAuthenticated(false);
+                setAuthHeader(null);
+              }}
+            >
+              Logout
             </Button>
           </div>
         </div>
@@ -128,6 +301,7 @@ const AdminDashboard = () => {
                           <TableHead>Name</TableHead>
                           <TableHead>Email</TableHead>
                           <TableHead>Phone</TableHead>
+                          <TableHead>Place</TableHead>
                           <TableHead>Message</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Actions</TableHead>
@@ -140,13 +314,14 @@ const AdminDashboard = () => {
                             <TableCell>{submission.name}</TableCell>
                             <TableCell>{submission.email}</TableCell>
                             <TableCell>{submission.phone}</TableCell>
+                            <TableCell>{submission.place}</TableCell>
                             <TableCell className="max-w-xs truncate">
                               {submission.message}
                             </TableCell>
                             <TableCell>{formatDate(submission.createdAt)}</TableCell>
                             <TableCell>
                               <a 
-                                href={`https://wa.me/${submission.phone.replace(/\D/g, '')}?text=Hello ${submission.name}, thank you for contacting OLGA Solar. Regarding your inquiry: "${submission.message.substring(0, 30)}..."`} 
+                                href={`https://wa.me/${submission.phone.replace(/\D/g, '')}?text=Hello ${submission.name}, thank you for contacting OLGA Solar. Regarding your inquiry: "${submission.message?.substring(0, 30) || ''}..."`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                               >

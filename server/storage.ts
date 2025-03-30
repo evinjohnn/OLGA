@@ -8,6 +8,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  verifyAdminUser(username: string, password: string): Promise<User | undefined>;
   
   // Contact form methods
   saveContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
@@ -26,6 +27,13 @@ export class MemStorage implements IStorage {
     this.contactSubmissions = new Map();
     this.userCurrentId = 1;
     this.contactCurrentId = 1;
+    
+    // Create default admin user
+    this.createUser({
+      username: "admin",
+      password: "admin123",
+      isAdmin: true
+    });
   }
 
   // User methods
@@ -41,15 +49,33 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      isAdmin: insertUser.isAdmin || false 
+    };
     this.users.set(id, user);
     return user;
+  }
+  
+  async verifyAdminUser(username: string, password: string): Promise<User | undefined> {
+    const user = await this.getUserByUsername(username);
+    if (user && user.password === password && user.isAdmin) {
+      return user;
+    }
+    return undefined;
   }
   
   // Contact form methods
   async saveContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission> {
     const id = this.contactCurrentId++;
-    const contactSubmission: ContactSubmission = { ...submission, id };
+    const now = new Date();
+    const contactSubmission: ContactSubmission = { 
+      ...submission, 
+      id,
+      message: submission.message || '',
+      createdAt: now
+    };
     this.contactSubmissions.set(id, contactSubmission);
     return contactSubmission;
   }
@@ -61,6 +87,31 @@ export class MemStorage implements IStorage {
 
 // Database storage implementation
 export class DatabaseStorage implements IStorage {
+  constructor() {
+    // Initialize admin user if not exists
+    this.initializeAdmin().catch(error => {
+      console.error("Failed to initialize admin user:", error);
+    });
+  }
+  
+  private async initializeAdmin() {
+    try {
+      // Check if admin user exists
+      const adminUser = await this.getUserByUsername("admin");
+      
+      if (!adminUser) {
+        // Create default admin user
+        await this.createUser({
+          username: "admin",
+          password: "admin123",
+          isAdmin: true
+        });
+        console.log("Default admin user created");
+      }
+    } catch (error) {
+      console.error("Error initializing admin:", error);
+    }
+  }
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -78,6 +129,19 @@ export class DatabaseStorage implements IStorage {
       .values(insertUser)
       .returning();
     return user;
+  }
+  
+  async verifyAdminUser(username: string, password: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
+      
+    if (user && user.password === password && user.isAdmin) {
+      return user;
+    }
+    
+    return undefined;
   }
   
   // Contact form methods
