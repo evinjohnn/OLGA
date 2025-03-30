@@ -69,10 +69,8 @@ const Navbar = () => {
         scrolled ? 'py-2 backdrop-blur-sm bg-black/30' : 'bg-transparent py-3'
       }`}
     >
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">OLGA</h1>
-        
-        {/* Mobile menu button */}
+      <div className="container mx-auto px-4 flex items-center justify-between lg:justify-center">
+        {/* Mobile menu button on the left */}
         <div className="lg:hidden">
           <button 
             onClick={() => setIsOpen(!isOpen)}
@@ -85,7 +83,7 @@ const Navbar = () => {
           </button>
         </div>
         
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation - now centered */}
         <div className="hidden lg:flex space-x-6 text-white">
           <a 
             href="#home" 
@@ -120,16 +118,27 @@ const Navbar = () => {
           >
             Our Products
           </a>
+          
+          {/* Register Button (desktop) - integrated into the navigation */}
+          <Button 
+            onClick={(e) => handleButtonClick(e, 'contact')}
+            className="text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full px-6 py-2 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:scale-105"
+            variant="ghost"
+          >
+            Register Now →
+          </Button>
         </div>
         
-        {/* Register Button (desktop) */}
-        <Button 
-          onClick={(e) => handleButtonClick(e, 'contact')}
-          className="hidden lg:flex text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full px-6 py-2 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:scale-105"
-          variant="ghost"
-        >
-          Register Now →
-        </Button>
+        {/* Mobile register button - right aligned */}
+        <div className="lg:hidden">
+          <Button 
+            onClick={(e) => handleButtonClick(e, 'contact')}
+            className="text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full px-3 py-1.5 text-sm shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+            variant="ghost"
+          >
+            Register
+          </Button>
+        </div>
       </div>
       
       {/* Mobile menu dropdown */}
