@@ -33,15 +33,17 @@
 @layer components {
   /* Glassmorphism */
   .glass {
-    @apply bg-white/25 backdrop-blur-md border border-white/20 shadow-lg;
+    @apply bg-white/15 backdrop-blur-md border border-white/30 shadow-sm;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
   }
 
   .glass-card {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-white/20 backdrop-blur-md border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
   }
 
   .glass-dark {
-    @apply bg-black/60 backdrop-blur-md border border-white/10;
+    @apply bg-black/40 backdrop-blur-md border border-white/10;
   }
 
   /* Progress bar */
