@@ -1,22 +1,12 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import owlImage from "../assets/erik-karits-BF16q77A1MY-unsplash.jpg";
 import { Button } from "../components/ui/button";
 
-// Particle type
-interface Particle {
-  x: number;
-  y: number;
-  size: number;
-  speedX: number;
-  speedY: number;
-  opacity: number;
-  color: string;
-}
-
 const HeroSection = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [particles, setParticles] = useState<Particle[]>([]);
+  const particlesRef = useRef<any[]>([]);
+  const animationRef = useRef<number>();
   
   // Scroll hint animation
   const scrollDown = () => {
@@ -29,17 +19,29 @@ const HeroSection = () => {
     }
   };
   
-  // Initialize particles
+  // Initialize and animate particles
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Set canvas dimensions
+    const setCanvasDimensions = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    
+    setCanvasDimensions();
+    
+    // Generate particles
     const generateParticles = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return [];
-      
-      const newParticles: Particle[] = [];
       const colors = ['#ffffff', '#87CEEB', '#ADD8E6', '#E0FFFF'];
+      particlesRef.current = [];
       
       for (let i = 0; i < 50; i++) {
-        newParticles.push({
+        particlesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           size: Math.random() * 2 + 0.5,
@@ -49,44 +51,15 @@ const HeroSection = () => {
           color: colors[Math.floor(Math.random() * colors.length)]
         });
       }
-      
-      return newParticles;
     };
     
-    setParticles(generateParticles());
+    generateParticles();
     
-    // Update canvas size on window resize
-    const handleResize = () => {
-      const canvas = canvasRef.current;
-      if (canvas) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        setParticles(generateParticles());
-      }
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-  
-  // Animate particles
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || particles.length === 0) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    let animationId: number;
-    
+    // Animation function
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      const updatedParticles = [...particles].map(particle => {
+      particlesRef.current.forEach(particle => {
         // Draw particle
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -103,20 +76,30 @@ const HeroSection = () => {
         if (particle.x > canvas.width) particle.x = 0;
         if (particle.y < 0) particle.y = canvas.height;
         if (particle.y > canvas.height) particle.y = 0;
-        
-        return particle;
       });
       
-      setParticles(updatedParticles);
-      animationId = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(animate);
     };
     
+    // Start animation
     animate();
     
-    return () => {
-      cancelAnimationFrame(animationId);
+    // Handle window resize
+    const handleResize = () => {
+      setCanvasDimensions();
+      generateParticles();
     };
-  }, [particles]);
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
   
   return (
     <section id="home" className="h-screen w-full relative overflow-hidden">
@@ -137,9 +120,18 @@ const HeroSection = () => {
       </div>
       
       {/* Main Hero Content */}
-      <div className="relative z-20 h-full flex flex-col justify-end">
-        <div className="w-full flex flex-col md:flex-row justify-between items-end px-8 pb-24">
-          {/* Main OLGA text */}
+      <div className="relative z-20 h-full flex flex-col justify-between pt-32 pb-16">
+        {/* Solar energy quote - moved to top */}
+        <div className="w-full px-8">
+          <div className="max-w-md mx-auto md:mx-0 text-white glass-dark p-4 rounded-lg mt-20 md:mt-12 md:ml-12">
+            <p className="text-sm md:text-base">
+              Solar energy is one of the most abundant and sustainable resources available to us. Harness the power of the sun with OLGA.
+            </p>
+          </div>
+        </div>
+        
+        {/* Main OLGA text */}
+        <div className="w-full px-8 pb-16">
           <div className="mb-8 md:mb-0">
             <h1 className="text-white text-[100px] md:text-[150px] font-bold leading-none tracking-wide drop-shadow-lg">OLGA</h1>
             <p className="text-white text-xl mt-2 drop-shadow-md">Powering Kerala for a Brighter Tomorrow.</p>
@@ -149,13 +141,6 @@ const HeroSection = () => {
             >
               Learn More
             </Button>
-          </div>
-          
-          {/* Text content on the right */}
-          <div className="max-w-xs text-white mb-16 glass-dark p-4 rounded-lg">
-            <p className="text-sm">
-              Solar energy is one of the most abundant and sustainable resources available to us. Harness the power of the sun with OLGA.
-            </p>
           </div>
         </div>
         

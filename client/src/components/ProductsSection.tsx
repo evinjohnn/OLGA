@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, MousePointerClick, Move } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
+import solarPanelsImg from '../assets/markus-spiske-pwFr_1SUXRo-unsplash.jpg';
 
 interface Product {
   id: number;
@@ -199,10 +200,20 @@ const ProductsSection = () => {
   };
 
   return (
-    <section id="products" className="py-20">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold mb-3 text-gray-800">Our Products</h2>
-        <p className="text-gray-600 mb-12 max-w-2xl">
+    <section id="products" className="py-20 relative">
+      {/* Background image with overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={solarPanelsImg} 
+          alt="Solar panels background" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      </div>
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <h2 className="text-4xl font-bold mb-3 text-white">Our Products</h2>
+        <p className="text-gray-200 mb-12 max-w-2xl">
           Discover our range of high-quality solar panels designed to meet various energy needs for homes and businesses across Kerala.
         </p>
         
