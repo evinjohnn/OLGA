@@ -170,7 +170,7 @@ const ContactSection = () => {
                 <div className="pt-2">
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#008FD5] hover:bg-[#008FD5]/90 text-white font-medium py-3 px-6 rounded-md transition-colors"
+                    className="w-full bg-[#00BF63] hover:bg-[#00BF63]/90 text-white font-medium py-3 px-6 rounded-md transition-colors"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Submitting..." : "Submit & Connect on WhatsApp"}
@@ -191,7 +191,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-medium text-[#1E293B] mb-1">Our Location</h4>
-                  <p className="text-gray-600">123 Solar Street, Green City, IN 560001</p>
+                  <p className="text-gray-600">45 Sunny Avenue, Kochi, Kerala 682001</p>
                 </div>
               </div>
               

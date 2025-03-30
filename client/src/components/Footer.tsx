@@ -13,7 +13,7 @@ const Footer = () => {
               <span className="ml-2 text-[#00BF63] font-medium">SOLAR</span>
             </div>
             <p className="text-gray-400 mb-4">
-              Powering a sustainable future with innovative solar energy solutions.
+              Powering Kerala for a Brighter Tomorrow with innovative solar energy solutions.
             </p>
           </div>
           
@@ -32,8 +32,8 @@ const Footer = () => {
           <div className="md:col-span-1">
             <h4 className="font-bold text-xl mb-4">Our Services</h4>
             <ul className="space-y-2">
-              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Residential Solar</a></li>
-              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Commercial Solar</a></li>
+              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Kerala Home Solar Kits</a></li>
+              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Commercial Solar Arrays</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Installation & Maintenance</a></li>
               <li><a href="#contact" className="text-gray-400 hover:text-white transition-colors">Energy Consultation</a></li>
             </ul>
@@ -53,7 +53,7 @@ const Footer = () => {
               />
               <button 
                 type="submit" 
-                className="bg-[#008FD5] hover:bg-[#008FD5]/90 px-4 py-2 rounded-r-md transition-colors"
+                className="bg-[#00BF63] hover:bg-[#00BF63]/90 px-4 py-2 rounded-r-md transition-colors"
                 aria-label="Subscribe"
               >
                 <PaperPlaneIcon className="h-5 w-5" />

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import layoutImage from "@assets/th.png";
 
 interface Product {
   id: number;
@@ -8,6 +9,7 @@ interface Product {
   description: string;
   price: string;
   image: string;
+  wattage?: string;
 }
 
 const ProductsSection = () => {
@@ -34,44 +36,50 @@ const ProductsSection = () => {
   const products: Product[] = [
     {
       id: 1,
-      name: "Residential Solar Panel",
-      description: "Perfect for homes looking to reduce electricity bills and carbon footprint.",
-      price: "$799",
+      name: "Kerala Home Solar Kit",
+      description: "Perfect for Kerala homes looking to reduce KSEB bills and ensure power during monsoon outages.",
+      price: "₹59,999",
+      wattage: "1 kW",
       image: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80"
     },
     {
       id: 2,
       name: "Commercial Solar Array",
-      description: "High-capacity solution for businesses with substantial energy requirements.",
-      price: "$1,999",
+      description: "High-capacity solution for Kerala businesses with substantial energy requirements.",
+      price: "₹1,99,999",
+      wattage: "10 kW",
       image: "https://images.unsplash.com/photo-1595437193398-f24279553f4f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80"
     },
     {
       id: 3,
       name: "Monocrystalline Premium",
-      description: "High-efficiency panels with sleek design and extended warranty.",
-      price: "$1,199",
+      description: "High-efficiency panels with sleek design and extended warranty for Kerala's tropical climate.",
+      price: "₹89,999",
+      wattage: "2 kW",
       image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80"
     },
     {
       id: 4,
       name: "Polycrystalline Standard",
-      description: "Cost-effective solution with reliable performance for budget-conscious customers.",
-      price: "$899",
+      description: "Cost-effective solution with reliable performance for budget-conscious Kerala customers.",
+      price: "₹69,999",
+      wattage: "2 kW",
       image: "https://images.unsplash.com/photo-1548448404-22f84406b107?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80"
     },
     {
       id: 5,
       name: "Bifacial Solar Panel",
-      description: "Innovative design captures sunlight from both sides for maximum energy production.",
-      price: "$1,499",
+      description: "Innovative design optimized for Kerala's equatorial sunlight, capturing light from both sides.",
+      price: "₹1,19,999",
+      wattage: "3 kW",
       image: "https://images.unsplash.com/photo-1641018121466-61d1168656b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80"
     },
     {
       id: 6,
       name: "Portable Solar Kit",
-      description: "Compact and foldable panels for camping, RVs, and emergency power needs.",
-      price: "$499",
+      description: "Compact and foldable panels for camping in Kerala's hills, houseboats, and emergency power needs.",
+      price: "₹29,999",
+      wattage: "500 W",
       image: "https://images.unsplash.com/photo-1624397640148-949b1732bb0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=300&q=80"
     },
   ];
@@ -126,7 +134,12 @@ const ProductsSection = () => {
                 ></div>
                 <div className="p-5">
                   <h3 className="text-lg font-bold text-[#1E293B] mb-2">{product.name}</h3>
-                  <p className="text-gray-600 mb-4">{product.description}</p>
+                  <p className="text-gray-600 mb-2">{product.description}</p>
+                  {product.wattage && (
+                    <div className="bg-[#00BF63]/10 text-[#00BF63] inline-block px-2 py-1 rounded-md text-sm font-medium mb-3">
+                      {product.wattage}
+                    </div>
+                  )}
                   <div className="flex justify-between items-center">
                     <span className="text-[#008FD5] font-bold">{product.price}</span>
                     <Button className="bg-[#008FD5] hover:bg-[#008FD5]/90 text-white">

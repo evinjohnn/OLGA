@@ -1,18 +1,19 @@
 import { CheckIcon } from "@/assets/icons";
+import layoutImage from "@assets/th.png";
 
 const AboutSection = () => {
   const features = [
     { text: "Quality Products" },
     { text: "Expert Installation" },
     { text: "After-Sales Support" },
-    { text: "Eco-Friendly Solutions" },
+    { text: "Kerala-Based Expertise" },
   ];
 
   const stats = [
-    { number: "500+", text: "Installations" },
+    { number: "500+", text: "Installations in Kerala" },
     { number: "10+", text: "Years Experience" },
     { number: "98%", text: "Satisfied Clients" },
-    { number: "5 MW+", text: "Power Generated" },
+    { number: "78%", text: "Conserved Energy" },
   ];
 
   return (
@@ -26,13 +27,13 @@ const AboutSection = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
             <h3 className="text-2xl font-bold font-montserrat text-[#008FD5] mb-4">
-              Leading Solar Energy Provider in the Region
+              Leading Solar Energy Provider in Kerala
             </h3>
             <p className="mb-4 text-gray-700">
-              OLGA Solar was founded with a mission to make renewable energy accessible to everyone. With over 10 years of experience in the industry, we have become the leading provider of solar solutions in the region.
+              OLGA Solar was founded with a mission to make renewable energy accessible to everyone in Kerala. With over a decade of experience in the industry, we have become the leading provider of solar solutions in the state.
             </p>
             <p className="mb-6 text-gray-700">
-              Our team of experts is dedicated to delivering high-quality solar products and exceptional customer service. We work closely with our clients to understand their energy needs and provide tailored solutions that maximize efficiency and savings.
+              Our team of local experts is dedicated to delivering high-quality solar products and exceptional customer service. We understand Kerala's unique climate and energy needs, providing tailored solutions that maximize efficiency and savings for homes and businesses across the state.
             </p>
             
             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -48,10 +49,13 @@ const AboutSection = () => {
           </div>
           
           <div className="order-1 md:order-2">
-            <div 
-              className="rounded-lg shadow-xl w-full h-[400px] bg-[url('https://images.unsplash.com/photo-1497440001374-f26997328c1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&h=500&q=80')] bg-cover bg-center"
-              aria-label="OLGA Solar team installing solar panels"
-            ></div>
+            <div className="rounded-lg shadow-xl overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1524519394423-8153ff9e7449?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&h=400&q=80" 
+                alt="Solar panels installation in Kerala backwaters"
+                className="w-full h-[400px] object-cover"
+              />
+            </div>
           </div>
         </div>
         
