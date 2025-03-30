@@ -1,23 +1,21 @@
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { insertContactSubmissionSchema } from "@shared/schema";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { SocialIcon } from "@/assets/icons";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Send, Phone, MapPin, Mail, Check } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { useToast } from '../hooks/use-toast';
+import { insertContactSubmissionSchema } from '@shared/schema';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '../lib/queryClient';
 
 // Extend the schema with validation rules
 const formSchema = insertContactSubmissionSchema.extend({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
-  place: z.string().min(2, "Please enter your location"),
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  phone: z.string().regex(/^\+?[0-9]{10,12}$/, { message: "Invalid phone number" }),
+  place: z.string().min(2, { message: "Place must be at least 2 characters" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -25,217 +23,222 @@ type FormValues = z.infer<typeof formSchema>;
 const ContactSection = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Initialize form with react-hook-form
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      place: "",
+      name: '',
+      email: '',
+      phone: '',
+      place: '',
     },
   });
 
-  // Setup mutation for form submission
-  const submitMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      return await apiRequest("POST", "/api/contact", data);
+      return apiRequest('POST', '/api/contact', data);
     },
     onSuccess: () => {
-      // Redirect to WhatsApp after successful submission
-      const whatsappNumber = "917736029821";
-      const message = `Hello OLGA Solar, I'm ${form.getValues().name} from ${form.getValues().place}. I'm interested in your solar products. Please contact me.`;
-      const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappURL, "_blank");
-      
-      // Reset form
+      toast({
+        title: "Success!",
+        description: "Your message has been sent. We'll contact you shortly.",
+        variant: "default",
+      });
       form.reset();
       
-      // Show success toast
-      toast({
-        title: "Form submitted successfully",
-        description: "You will be redirected to WhatsApp to continue the conversation.",
-      });
+      // Redirect to WhatsApp with form data
+      redirectToWhatsApp(form.getValues());
     },
     onError: (error) => {
       toast({
-        title: "Error submitting form",
-        description: error.message || "Please try again later.",
+        title: "Error",
+        description: "Failed to submit the form. Please try again.",
         variant: "destructive",
       });
-    },
-    onSettled: () => {
       setIsSubmitting(false);
     },
   });
 
+  const redirectToWhatsApp = (data: FormValues) => {
+    const phoneNumber = "917736029821"; // WhatsApp number with country code (no + sign)
+    const message = `Hello OLGA Solar, I'm ${data.name} from ${data.place}. I'm interested in your solar products. Please contact me.`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const onSubmit = (data: FormValues) => {
     setIsSubmitting(true);
-    submitMutation.mutate(data);
+    mutation.mutate(data);
   };
 
   return (
     <section id="contact" className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold font-montserrat text-[#1E293B] mb-2">Contact Us</h2>
-          <div className="w-20 h-1 bg-[#008FD5] mx-auto mb-4"></div>
-          <p className="max-w-2xl mx-auto text-gray-600">
-            Ready to start your solar journey? Fill out the form below and our team will get back to you shortly.
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <div className="bg-gray-50 rounded-lg p-8 shadow-md">
-            <h3 className="text-xl font-bold font-montserrat text-[#1E293B] mb-6">Send Us a Message</h3>
-            
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Your Name" 
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008FD5]" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Email</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="email" 
-                          placeholder="your.email@example.com" 
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008FD5]" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Phone</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="tel" 
-                          placeholder="Your Phone Number" 
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008FD5]" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="place"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">Place</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Your Location" 
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008FD5]" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="pt-2">
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-[#00BF63] hover:bg-[#00BF63]/90 text-white font-medium py-3 px-6 rounded-md transition-colors"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit & Connect on WhatsApp"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">Contact Us</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Ready to switch to solar energy? Get in touch with us today to discuss your requirements and receive a personalized quote.
+            </p>
           </div>
           
-          {/* Contact Information */}
-          <div>
-            <h3 className="text-xl font-bold font-montserrat text-[#1E293B] mb-6">Get in Touch</h3>
-            
-            <div className="space-y-6">
-              <div className="flex">
-                <div className="w-12 h-12 rounded-full bg-[#008FD5]/10 flex items-center justify-center text-[#008FD5] mr-4">
-                  <MapPin className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-[#1E293B] mb-1">Our Location</h4>
-                  <p className="text-gray-600">45 Sunny Avenue, Kochi, Kerala 682001</p>
+          <div className="grid md:grid-cols-5 gap-10">
+            {/* Contact Information */}
+            <div className="md:col-span-2 space-y-8">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">Get In Touch</h3>
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <div className="bg-sky-100 p-3 rounded-full text-sky-600 mr-4">
+                      <Phone size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800">Phone</h4>
+                      <p className="text-gray-600">+91 7736029821</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-sky-100 p-3 rounded-full text-sky-600 mr-4">
+                      <Mail size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800">Email</h4>
+                      <p className="text-gray-600">info@olgasolar.com</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-sky-100 p-3 rounded-full text-sky-600 mr-4">
+                      <MapPin size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800">Location</h4>
+                      <p className="text-gray-600">
+                        OLGA Tower, Solar Street<br />
+                        Kochi, Kerala 682001<br />
+                        India
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div className="flex">
-                <div className="w-12 h-12 rounded-full bg-[#008FD5]/10 flex items-center justify-center text-[#008FD5] mr-4">
-                  <Phone className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-[#1E293B] mb-1">Phone Number</h4>
-                  <p className="text-gray-600">+91 7736029821</p>
-                </div>
-              </div>
-              
-              <div className="flex">
-                <div className="w-12 h-12 rounded-full bg-[#008FD5]/10 flex items-center justify-center text-[#008FD5] mr-4">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-[#1E293B] mb-1">Email Address</h4>
-                  <p className="text-gray-600">info@olgasolar.com</p>
-                </div>
-              </div>
-              
-              <div className="flex">
-                <div className="w-12 h-12 rounded-full bg-[#008FD5]/10 flex items-center justify-center text-[#008FD5] mr-4">
-                  <Clock className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-[#1E293B] mb-1">Working Hours</h4>
-                  <p className="text-gray-600">Monday - Saturday: 9:00 AM - 6:00 PM</p>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Working Hours</h3>
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Monday - Friday:</span>
+                      <span className="font-medium">9:00 AM - 6:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Saturday:</span>
+                      <span className="font-medium">9:00 AM - 2:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Sunday:</span>
+                      <span className="font-medium">Closed</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             
-            {/* Social Media Links */}
-            <div className="mt-8">
-              <h4 className="font-medium text-[#1E293B] mb-3">Follow Us</h4>
-              <div className="flex space-x-4">
-                <SocialIcon type="facebook" />
-                <SocialIcon type="twitter" />
-                <SocialIcon type="instagram" />
-                <SocialIcon type="linkedin" />
-                <SocialIcon type="whatsapp" href="https://wa.me/917736029821" />
-              </div>
+            {/* Contact Form */}
+            <div className="md:col-span-3 bg-gray-50 p-8 rounded-xl shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h3>
+              
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      Your Name
+                    </label>
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      {...form.register('name')}
+                      className={`w-full ${form.formState.errors.name ? 'border-red-300' : ''}`}
+                    />
+                    {form.formState.errors.name && (
+                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.name.message}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john@example.com"
+                      {...form.register('email')}
+                      className={`w-full ${form.formState.errors.email ? 'border-red-300' : ''}`}
+                    />
+                    {form.formState.errors.email && (
+                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.email.message}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number
+                    </label>
+                    <Input
+                      id="phone"
+                      placeholder="+91 9876543210"
+                      {...form.register('phone')}
+                      className={`w-full ${form.formState.errors.phone ? 'border-red-300' : ''}`}
+                    />
+                    {form.formState.errors.phone && (
+                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.phone.message}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="place" className="block text-sm font-medium text-gray-700 mb-1">
+                      Your Location
+                    </label>
+                    <Input
+                      id="place"
+                      placeholder="Kochi, Kerala"
+                      {...form.register('place')}
+                      className={`w-full ${form.formState.errors.place ? 'border-red-300' : ''}`}
+                    />
+                    {form.formState.errors.place && (
+                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.place.message}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-sky-600 hover:bg-sky-700 text-white py-2 px-4 rounded-md flex items-center justify-center"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="mr-2">Submitting</span>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send size={16} className="ml-2" />
+                    </>
+                  )}
+                </Button>
+                
+                <p className="text-center text-sm text-gray-500 mt-4">
+                  By submitting this form, you'll be redirected to WhatsApp to connect with us directly.
+                </p>
+              </form>
             </div>
           </div>
         </div>

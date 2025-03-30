@@ -1,72 +1,113 @@
-import { CheckIcon } from "@/assets/icons";
-import layoutImage from "@assets/th.png";
+import { Sun, Award, Users } from 'lucide-react';
 
 const AboutSection = () => {
-  const features = [
-    { text: "Quality Products" },
-    { text: "Expert Installation" },
-    { text: "After-Sales Support" },
-    { text: "Kerala-Based Expertise" },
-  ];
-
-  const stats = [
-    { number: "500+", text: "Installations in Kerala" },
-    { number: "10+", text: "Years Experience" },
-    { number: "98%", text: "Satisfied Clients" },
-    { number: "78%", text: "Conserved Energy" },
-  ];
-
   return (
     <section id="about" className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold font-montserrat text-[#1E293B] mb-2">About Us</h2>
-          <div className="w-20 h-1 bg-[#008FD5] mx-auto"></div>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1">
-            <h3 className="text-2xl font-bold font-montserrat text-[#008FD5] mb-4">
-              Leading Solar Energy Provider in Kerala
-            </h3>
-            <p className="mb-4 text-gray-700">
-              OLGA Solar was founded with a mission to make renewable energy accessible to everyone in Kerala. With over a decade of experience in the industry, we have become the leading provider of solar solutions in the state.
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">About Us</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              OLGA is Kerala's leading solar energy provider, dedicated to delivering sustainable power solutions for homes and businesses.
             </p>
-            <p className="mb-6 text-gray-700">
-              Our team of local experts is dedicated to delivering high-quality solar products and exceptional customer service. We understand Kerala's unique climate and energy needs, providing tailored solutions that maximize efficiency and savings for homes and businesses across the state.
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-[#008FD5]/10 flex items-center justify-center text-[#008FD5] mr-3">
-                    <CheckIcon className="h-5 w-5" />
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Image side */}
+            <div className="relative">
+              <div className="bg-sky-100 rounded-lg p-8">
+                <img 
+                  src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                  alt="Solar panels installation" 
+                  className="rounded-lg shadow-lg w-full h-auto object-cover"
+                />
+                <div className="absolute -bottom-8 -right-8 bg-sky-600 text-white p-6 rounded-lg shadow-lg">
+                  <div className="text-center">
+                    <p className="text-4xl font-bold">10+</p>
+                    <p className="text-sm">Years of Excellence</p>
                   </div>
-                  <span className="font-medium">{feature.text}</span>
                 </div>
-              ))}
+              </div>
+            </div>
+            
+            {/* Content side */}
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Kerala's Premier Solar Provider</h3>
+                <p className="text-gray-600">
+                  Since 2014, OLGA has been at the forefront of Kerala's renewable energy revolution, helping households and businesses across the state make the transition to clean, sustainable solar power.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="text-sky-600 mb-3">
+                    <Sun size={28} />
+                  </div>
+                  <h4 className="font-bold text-gray-800 mb-2">Eco-Friendly Solutions</h4>
+                  <p className="text-gray-600 text-sm">
+                    Our solar solutions have helped reduce carbon emissions by thousands of tons across Kerala.
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="text-sky-600 mb-3">
+                    <Award size={28} />
+                  </div>
+                  <h4 className="font-bold text-gray-800 mb-2">Quality Guaranteed</h4>
+                  <p className="text-gray-600 text-sm">
+                    We use only the highest quality panels with industry-leading efficiency ratings.
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="text-sky-600 mb-3">
+                    <Users size={28} />
+                  </div>
+                  <h4 className="font-bold text-gray-800 mb-2">Expert Installation</h4>
+                  <p className="text-gray-600 text-sm">
+                    Our certified technicians ensure perfect installation and optimal performance.
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <div className="text-sky-600 mb-3">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2V6M12 18V22M6 12H2M22 12H18M19.07 4.93L16.24 7.76M19.07 19.07L16.24 16.24M4.93 19.07L7.76 16.24M4.93 4.93L7.76 7.76" 
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h4 className="font-bold text-gray-800 mb-2">Comprehensive Support</h4>
+                  <p className="text-gray-600 text-sm">
+                    From consultation to maintenance, we provide end-to-end support for all your solar needs.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="order-1 md:order-2">
-            <div className="rounded-lg shadow-xl overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1524519394423-8153ff9e7449?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&h=400&q=80" 
-                alt="Solar panels installation in Kerala backwaters"
-                className="w-full h-[400px] object-cover"
-              />
+          {/* Statistics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-20">
+            <div className="text-center p-6 bg-sky-50 rounded-lg">
+              <p className="text-4xl font-bold text-sky-600 mb-2">1200+</p>
+              <p className="text-gray-700">Installations</p>
+            </div>
+            
+            <div className="text-center p-6 bg-sky-50 rounded-lg">
+              <p className="text-4xl font-bold text-sky-600 mb-2">98%</p>
+              <p className="text-gray-700">Customer Satisfaction</p>
+            </div>
+            
+            <div className="text-center p-6 bg-sky-50 rounded-lg">
+              <p className="text-4xl font-bold text-sky-600 mb-2">25+</p>
+              <p className="text-gray-700">Districts Covered</p>
+            </div>
+            
+            <div className="text-center p-6 bg-sky-50 rounded-lg">
+              <p className="text-4xl font-bold text-sky-600 mb-2">10MW+</p>
+              <p className="text-gray-700">Total Capacity Installed</p>
             </div>
           </div>
-        </div>
-        
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center p-6 bg-[#008FD5]/5 rounded-lg">
-              <div className="text-3xl font-bold text-[#008FD5] mb-2">{stat.number}</div>
-              <div className="font-medium">{stat.text}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

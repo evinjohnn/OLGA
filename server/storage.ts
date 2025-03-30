@@ -1,23 +1,34 @@
-import { users, type User, type InsertUser } from "@shared/schema";
+import { users, contactSubmissions, type User, type InsertUser, type InsertContactSubmission, type ContactSubmission } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
-// modify the interface with any CRUD methods
-// you might need
-
+// Interface with all CRUD methods
 export interface IStorage {
+  // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Contact form methods
+  saveContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
+  getAllContactSubmissions(): Promise<ContactSubmission[]>;
 }
 
+// In-memory storage implementation
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  currentId: number;
+  private contactSubmissions: Map<number, ContactSubmission>;
+  private userCurrentId: number;
+  private contactCurrentId: number;
 
   constructor() {
     this.users = new Map();
-    this.currentId = 1;
+    this.contactSubmissions = new Map();
+    this.userCurrentId = 1;
+    this.contactCurrentId = 1;
   }
 
+  // User methods
   async getUser(id: number): Promise<User | undefined> {
     return this.users.get(id);
   }
@@ -29,11 +40,59 @@ export class MemStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
+    const id = this.userCurrentId++;
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
   }
+  
+  // Contact form methods
+  async saveContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission> {
+    const id = this.contactCurrentId++;
+    const contactSubmission: ContactSubmission = { ...submission, id };
+    this.contactSubmissions.set(id, contactSubmission);
+    return contactSubmission;
+  }
+  
+  async getAllContactSubmissions(): Promise<ContactSubmission[]> {
+    return Array.from(this.contactSubmissions.values());
+  }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+  
+  // Contact form methods
+  async saveContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission> {
+    const [contactSubmission] = await db
+      .insert(contactSubmissions)
+      .values(submission)
+      .returning();
+    return contactSubmission;
+  }
+  
+  async getAllContactSubmissions(): Promise<ContactSubmission[]> {
+    return await db.select().from(contactSubmissions);
+  }
+}
+
+// Use Database storage for production
+export const storage = new DatabaseStorage();

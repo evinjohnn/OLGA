@@ -1,75 +1,101 @@
-import { Link } from "wouter";
-import { PaperPlaneIcon } from "@/assets/icons";
+import { Facebook, Twitter, Instagram, Linkedin, Send, ArrowUp } from 'lucide-react';
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
 const Footer = () => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <footer className="bg-[#1E293B] text-white py-12">
+    <footer className="bg-gray-900 text-white pt-16 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           {/* Company Info */}
-          <div className="md:col-span-1">
-            <div className="flex items-center mb-4">
-              <span className="text-3xl font-bold text-white font-montserrat">OLGA</span>
-              <span className="ml-2 text-[#00BF63] font-medium">SOLAR</span>
-            </div>
-            <p className="text-gray-400 mb-4">
+          <div className="col-span-1">
+            <h3 className="text-2xl font-bold mb-6">OLGA</h3>
+            <p className="text-gray-400 mb-6">
               Powering Kerala for a Brighter Tomorrow with innovative solar energy solutions.
             </p>
-          </div>
-          
-          {/* Quick Links */}
-          <div className="md:col-span-1">
-            <h4 className="font-bold text-xl mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li><a href="#home" className="text-gray-400 hover:text-white transition-colors">Home</a></li>
-              <li><a href="#about" className="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Our Products</a></li>
-              <li><a href="#contact" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-            </ul>
+            <div className="flex space-x-4">
+              <a href="#" className="bg-sky-600 hover:bg-sky-700 p-2 rounded-full transition duration-300">
+                <Facebook size={18} />
+              </a>
+              <a href="#" className="bg-sky-600 hover:bg-sky-700 p-2 rounded-full transition duration-300">
+                <Twitter size={18} />
+              </a>
+              <a href="#" className="bg-sky-600 hover:bg-sky-700 p-2 rounded-full transition duration-300">
+                <Instagram size={18} />
+              </a>
+              <a href="#" className="bg-sky-600 hover:bg-sky-700 p-2 rounded-full transition duration-300">
+                <Linkedin size={18} />
+              </a>
+            </div>
           </div>
           
           {/* Services */}
-          <div className="md:col-span-1">
-            <h4 className="font-bold text-xl mb-4">Our Services</h4>
-            <ul className="space-y-2">
-              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Kerala Home Solar Kits</a></li>
-              <li><a href="#products" className="text-gray-400 hover:text-white transition-colors">Commercial Solar Arrays</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Installation & Maintenance</a></li>
-              <li><a href="#contact" className="text-gray-400 hover:text-white transition-colors">Energy Consultation</a></li>
+          <div className="col-span-1">
+            <h3 className="font-bold text-lg mb-6">Our Services</h3>
+            <ul className="space-y-3">
+              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Solar Panel Installation</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Energy Assessments</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Maintenance & Support</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Consultation Services</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Commercial Solutions</a></li>
+            </ul>
+          </div>
+          
+          {/* Quick Links */}
+          <div className="col-span-1">
+            <h3 className="font-bold text-lg mb-6">Quick Links</h3>
+            <ul className="space-y-3">
+              <li><a href="#home" className="text-gray-400 hover:text-white transition duration-300">Home</a></li>
+              <li><a href="#about" className="text-gray-400 hover:text-white transition duration-300">About Us</a></li>
+              <li><a href="#products" className="text-gray-400 hover:text-white transition duration-300">Our Products</a></li>
+              <li><a href="#contact" className="text-gray-400 hover:text-white transition duration-300">Contact</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a></li>
             </ul>
           </div>
           
           {/* Newsletter */}
-          <div className="md:col-span-1">
-            <h4 className="font-bold text-xl mb-4">Newsletter</h4>
+          <div className="col-span-1">
+            <h3 className="font-bold text-lg mb-6">Newsletter</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to receive updates on our latest products and offers.
+              Subscribe to our newsletter for the latest updates and offers.
             </p>
-            <form className="flex">
-              <input 
-                type="email" 
+            <div className="flex">
+              <Input 
                 placeholder="Your email" 
-                className="px-4 py-2 rounded-l-md w-full focus:outline-none text-[#1E293B]"
+                className="bg-gray-800 border-gray-700 text-white focus:ring-sky-500 focus:border-sky-500 rounded-l-md"
               />
-              <button 
-                type="submit" 
-                className="bg-[#00BF63] hover:bg-[#00BF63]/90 px-4 py-2 rounded-r-md transition-colors"
-                aria-label="Subscribe"
+              <Button 
+                className="bg-sky-600 hover:bg-sky-700 rounded-l-none"
               >
-                <PaperPlaneIcon className="h-5 w-5" />
-              </button>
-            </form>
+                <Send size={16} />
+              </Button>
+            </div>
           </div>
         </div>
         
-        <div className="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400">
+        {/* Divider */}
+        <div className="border-t border-gray-800 my-8"></div>
+        
+        {/* Copyright and Back to top */}
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 text-sm">
             &copy; {new Date().getFullYear()} OLGA Solar. All rights reserved.
           </p>
-          <div className="mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors mr-4">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
-          </div>
+          
+          <button 
+            onClick={scrollToTop}
+            className="flex items-center text-gray-400 hover:text-white mt-4 md:mt-0 transition duration-300"
+          >
+            Back to top
+            <ArrowUp size={16} className="ml-2" />
+          </button>
         </div>
       </div>
     </footer>

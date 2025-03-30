@@ -1,10 +1,19 @@
-import owlImage from "@assets/erik-karits-BF16q77A1MY-unsplash.jpg";
+import { useEffect } from 'react';
+import owlImage from "../assets/erik-karits-BF16q77A1MY-unsplash.jpg";
+import { Button } from "../components/ui/button";
 
 const HeroSection = () => {
   return (
     <section id="home" className="h-screen w-full relative overflow-hidden">
-      {/* Background gradient - using the exact same gray as in the image */}
-      <div className="absolute inset-0 bg-[#C5C8C9] z-0"></div>
+      {/* Background with semi-transparent overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={owlImage} 
+          alt="Owl on solar panel - OLGA Solar Energy" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gray-500/40"></div>
+      </div>
       
       {/* Navigation Links */}
       <div className="relative z-10 pt-7 px-8 flex justify-between items-center">
@@ -15,7 +24,7 @@ const HeroSection = () => {
           <a href="#blog" className="hover:opacity-80 transition-opacity">Blog</a>
         </div>
         <div>
-          <a href="#register" className="text-white font-medium hover:opacity-80 transition-opacity">Register</a>
+          <Button className="bg-white text-sky-600 hover:bg-white/90 rounded-full px-4 py-1">Register</Button>
         </div>
       </div>
       
@@ -29,18 +38,8 @@ const HeroSection = () => {
             </p>
           </div>
           
-          {/* Image in the center - using the full image as background instead of showing it separately */}
-          <div className="absolute right-0 top-0 w-full h-full z-0">
-            <img 
-              src={owlImage} 
-              alt="Owl on solar panel - OLGA Solar Energy" 
-              className="w-full h-full object-cover"
-              style={{ opacity: 0.99 }} // This prevents the image from being 100% opaque
-            />
-          </div>
-          
           {/* Main text at the bottom */}
-          <div className="self-end mb-32 ml-8 z-10 relative">
+          <div className="self-end mb-32 ml-8">
             <h1 className="text-white text-[120px] font-bold leading-none">OLGA</h1>
             <p className="text-white text-xl">Powering Kerala for a Brighter Tomorrow.</p>
           </div>

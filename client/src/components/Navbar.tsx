@@ -1,92 +1,78 @@
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Button } from "../components/ui/button";
 
 const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // Handle scroll event to add shadow to navbar when scrolled
+  // Handle scrolling effect for navbar
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const isScrolled = window.scrollY > 10;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+    document.addEventListener('scroll', handleScroll);
+    return () => {
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
+  // Smooth scrolling function
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
-    <header className={`fixed w-full bg-white z-50 transition-shadow ${isScrolled ? 'shadow-md' : ''}`}>
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo */}
-        <div className="flex items-center">
-          <span className="text-3xl font-bold text-[#008FD5] font-montserrat">OLGA</span>
-          <span className="ml-2 text-[#00BF63] font-medium">SOLAR</span>
-        </div>
-        
-        {/* Mobile Menu Button */}
-        <button 
-          onClick={toggleMobileMenu} 
-          className="md:hidden focus:outline-none"
-          aria-label="Toggle mobile menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="text-[#1E293B] h-6 w-6" />
-          ) : (
-            <Menu className="text-[#1E293B] h-6 w-6" />
-          )}
-        </button>
-        
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8">
-          <a href="#home" className="font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors">Home</a>
-          <a href="#about" className="font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors">About Us</a>
-          <a href="#products" className="font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors">Our Products</a>
-          <a href="#contact" className="font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors">Contact</a>
-        </nav>
-      </div>
-      
-      {/* Mobile Navigation Menu */}
-      <div className={`md:hidden bg-white w-full shadow-md ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="container mx-auto px-4 py-3 flex flex-col space-y-3">
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+      scrolled ? 'bg-sky-600 shadow-md py-3' : 'bg-transparent py-7'
+    }`}>
+      <div className="container mx-auto px-6 flex justify-between items-center">
+        <div className="flex space-x-10 text-white font-medium">
           <a 
             href="#home" 
-            className="py-2 font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors"
-            onClick={closeMobileMenu}
+            onClick={(e) => scrollToSection(e, 'home')}
+            className="hover:opacity-80 transition-opacity"
           >
             Home
           </a>
           <a 
             href="#about" 
-            className="py-2 font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors"
-            onClick={closeMobileMenu}
+            onClick={(e) => scrollToSection(e, 'about')}
+            className="hover:opacity-80 transition-opacity"
           >
             About Us
           </a>
           <a 
             href="#products" 
-            className="py-2 font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors"
-            onClick={closeMobileMenu}
+            onClick={(e) => scrollToSection(e, 'products')}
+            className="hover:opacity-80 transition-opacity"
           >
             Our Products
           </a>
           <a 
             href="#contact" 
-            className="py-2 font-medium text-[#1E293B] hover:text-[#008FD5] transition-colors"
-            onClick={closeMobileMenu}
+            onClick={(e) => scrollToSection(e, 'contact')}
+            className="hover:opacity-80 transition-opacity"
           >
             Contact
           </a>
         </div>
+        <Button 
+          className="bg-white text-sky-600 hover:bg-white/90 rounded-full px-4 py-1"
+        >
+          Register
+        </Button>
       </div>
-    </header>
+    </nav>
   );
 };
 
