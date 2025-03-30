@@ -64,18 +64,18 @@ const Footer = () => {
           {/* Newsletter */}
           <div className="col-span-1">
             <h3 className="font-bold text-lg mb-6">Newsletter</h3>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-400 mb-5">
               Subscribe to our newsletter for the latest updates and offers.
             </p>
-            <div className="flex">
+            <div className="relative group">
               <Input 
-                placeholder="Your email" 
-                className="bg-gray-800 border-gray-700 text-white focus:ring-sky-500 focus:border-sky-500 rounded-l-md"
+                placeholder="Your email address" 
+                className="w-full h-12 pl-5 pr-14 bg-gray-800/50 border-gray-700/50 text-white rounded-full focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
               />
               <Button 
-                className="bg-sky-600 hover:bg-sky-700 rounded-l-none"
+                className="absolute right-1 top-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg shadow-sky-900/20"
               >
-                <Send size={16} />
+                <Send size={16} className="transform -rotate-45 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Button>
             </div>
           </div>

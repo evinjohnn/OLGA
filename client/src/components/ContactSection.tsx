@@ -36,7 +36,11 @@ const ContactSection = () => {
 
   const mutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      return apiRequest('POST', '/api/contact', data);
+      return apiRequest({
+        method: 'POST',
+        url: '/api/contact',
+        body: data
+      });
     },
     onSuccess: () => {
       toast({
@@ -147,76 +151,72 @@ const ContactSection = () => {
             </div>
             
             {/* Contact Form */}
-            <div className="md:col-span-3 bg-gray-50 p-8 rounded-xl shadow-sm">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h3>
+            <div className="md:col-span-3 bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-md">
+              <h3 className="text-2xl font-bold text-gray-800 mb-8">Send Us a Message</h3>
               
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Name
-                    </label>
+                <div className="space-y-5">
+                  <div className="relative group">
                     <Input
                       id="name"
-                      placeholder="John Doe"
+                      placeholder="Your Name"
                       {...form.register('name')}
-                      className={`w-full ${form.formState.errors.name ? 'border-red-300' : ''}`}
+                      className={`w-full h-14 px-6 text-base bg-gray-100 border-none shadow-sm rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all ${
+                        form.formState.errors.name ? 'ring-2 ring-red-400' : ''
+                      }`}
                     />
                     {form.formState.errors.name && (
-                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.name.message}</p>
+                      <p className="mt-2 ml-6 text-sm text-red-500">{form.formState.errors.name.message}</p>
                     )}
                   </div>
                   
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address
-                    </label>
+                  <div className="relative group">
                     <Input
                       id="email"
                       type="email"
-                      placeholder="john@example.com"
+                      placeholder="Email Address"
                       {...form.register('email')}
-                      className={`w-full ${form.formState.errors.email ? 'border-red-300' : ''}`}
+                      className={`w-full h-14 px-6 text-base bg-gray-100 border-none shadow-sm rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all ${
+                        form.formState.errors.email ? 'ring-2 ring-red-400' : ''
+                      }`}
                     />
                     {form.formState.errors.email && (
-                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.email.message}</p>
+                      <p className="mt-2 ml-6 text-sm text-red-500">{form.formState.errors.email.message}</p>
                     )}
                   </div>
                   
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number
-                    </label>
+                  <div className="relative group">
                     <Input
                       id="phone"
-                      placeholder="+91 9876543210"
+                      placeholder="Phone Number"
                       {...form.register('phone')}
-                      className={`w-full ${form.formState.errors.phone ? 'border-red-300' : ''}`}
+                      className={`w-full h-14 px-6 text-base bg-gray-100 border-none shadow-sm rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all ${
+                        form.formState.errors.phone ? 'ring-2 ring-red-400' : ''
+                      }`}
                     />
                     {form.formState.errors.phone && (
-                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.phone.message}</p>
+                      <p className="mt-2 ml-6 text-sm text-red-500">{form.formState.errors.phone.message}</p>
                     )}
                   </div>
                   
-                  <div>
-                    <label htmlFor="place" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Location
-                    </label>
+                  <div className="relative group">
                     <Input
                       id="place"
-                      placeholder="Kochi, Kerala"
+                      placeholder="Your Location"
                       {...form.register('place')}
-                      className={`w-full ${form.formState.errors.place ? 'border-red-300' : ''}`}
+                      className={`w-full h-14 px-6 text-base bg-gray-100 border-none shadow-sm rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all ${
+                        form.formState.errors.place ? 'ring-2 ring-red-400' : ''
+                      }`}
                     />
                     {form.formState.errors.place && (
-                      <p className="mt-1 text-sm text-red-500">{form.formState.errors.place.message}</p>
+                      <p className="mt-2 ml-6 text-sm text-red-500">{form.formState.errors.place.message}</p>
                     )}
                   </div>
                 </div>
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-sky-600 hover:bg-sky-700 text-white py-2 px-4 rounded-md flex items-center justify-center"
+                  className="w-full h-14 mt-6 bg-gradient-to-r from-blue-500 to-sky-600 hover:from-blue-600 hover:to-sky-700 text-white font-medium py-2 px-8 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 hover:shadow-blue-600/40 transition-all duration-300 disabled:opacity-70"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -229,13 +229,13 @@ const ContactSection = () => {
                     </>
                   ) : (
                     <>
-                      <span>Send Message</span>
-                      <Send size={16} className="ml-2" />
+                      <span className="mr-2">Send Message</span>
+                      <Send size={18} className="transition-transform group-hover:translate-x-1" />
                     </>
                   )}
                 </Button>
                 
-                <p className="text-center text-sm text-gray-500 mt-4">
+                <p className="text-center text-sm text-gray-500 mt-6">
                   By submitting this form, you'll be redirected to WhatsApp to connect with us directly.
                 </p>
               </form>

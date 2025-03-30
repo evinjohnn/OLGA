@@ -277,7 +277,7 @@ const ProductsSection = () => {
               solarPanels.map((panel) => (
                 <div 
                   key={panel.id}
-                  className="flex-shrink-0 w-80 glass-card rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
+                  className="flex-shrink-0 w-80 glass-card rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group bg-white/90 backdrop-blur-md"
                 >
                   <div className="h-48 overflow-hidden relative group">
                     <img 
@@ -286,27 +286,28 @@ const ProductsSection = () => {
                       className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                     />
                     {/* Image overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    {/* Click hint */}
-                    <div className="absolute bottom-3 right-3 bg-white/90 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <MousePointerClick className="h-4 w-4 text-sky-600" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-70 transition-opacity duration-300"></div>
+                    
+                    {/* Product wattage on image */}
+                    {panel.wattage && (
+                      <span className="absolute top-3 right-3 bg-white/90 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm shadow-md">
+                        {panel.wattage}
+                      </span>
+                    )}
+                    
+                    {/* Product name on image */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="font-bold text-xl text-white drop-shadow-md">{panel.name}</h3>
                     </div>
                   </div>
+                  
                   <div className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-bold text-xl text-gray-800 group-hover:text-sky-600 transition-colors duration-300">{panel.name}</h3>
-                      {panel.wattage && (
-                        <span className="bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full group-hover:bg-sky-200 transition-colors duration-300">
-                          {panel.wattage}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-600 text-sm mb-4">{panel.description}</p>
+                    <p className="text-gray-700 text-sm mb-4 line-clamp-2">{panel.description}</p>
                     <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold text-sky-600 group-hover:text-sky-700 transition-colors duration-300">{panel.price}</span>
+                      <span className="text-xl font-bold text-sky-600 group-hover:text-sky-700 transition-colors duration-300 drop-shadow-sm">{panel.price}</span>
                       <Button 
                         size="sm" 
-                        className="btn-glow bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-600 hover:to-blue-700"
+                        className="bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-600 hover:to-blue-700 rounded-full px-4 shadow-md shadow-blue-500/20 hover:shadow-blue-600/30 transition-all duration-300"
                       >
                         Learn More
                       </Button>
