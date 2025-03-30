@@ -93,7 +93,7 @@ const Navbar = () => {
             className={`px-5 py-2 transition-all duration-300 rounded-full ${
               activeSection === 'home' 
                 ? 'border border-white/20 backdrop-blur-md bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
-                : 'text-white/90 hover:text-white'
+                : 'text-white/90 hover:text-white hover:bg-white/10 hover:border hover:border-white/20 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] hover:scale-105'
             }`}
           >
             Home
@@ -104,7 +104,7 @@ const Navbar = () => {
             className={`px-5 py-2 transition-all duration-300 rounded-full ${
               activeSection === 'about' 
                 ? 'border border-white/20 backdrop-blur-md bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
-                : 'text-white/90 hover:text-white'
+                : 'text-white/90 hover:text-white hover:bg-white/10 hover:border hover:border-white/20 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] hover:scale-105'
             }`}
           >
             About Us
@@ -115,7 +115,7 @@ const Navbar = () => {
             className={`px-5 py-2 transition-all duration-300 rounded-full ${
               activeSection === 'products' 
                 ? 'border border-white/20 backdrop-blur-md bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]' 
-                : 'text-white/90 hover:text-white'
+                : 'text-white/90 hover:text-white hover:bg-white/10 hover:border hover:border-white/20 hover:shadow-[0_0_12px_rgba(255,255,255,0.15)] hover:scale-105'
             }`}
           >
             Our Products
@@ -125,7 +125,7 @@ const Navbar = () => {
         {/* Register Button (desktop) */}
         <Button 
           onClick={(e) => handleButtonClick(e, 'contact')}
-          className="hidden lg:flex text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full px-6 py-2 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+          className="hidden lg:flex text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full px-6 py-2 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:scale-105"
           variant="ghost"
         >
           Register Now →
@@ -144,8 +144,8 @@ const Navbar = () => {
             onClick={(e) => scrollToSection(e, 'home')}
             className={`px-4 py-2 transition-all duration-300 rounded-full ${
               activeSection === 'home' 
-                ? 'bg-white/10 text-white' 
-                : 'text-white/90 hover:text-white'
+                ? 'bg-white/10 text-white border border-white/20' 
+                : 'text-white/90 hover:text-white hover:bg-white/10 hover:border hover:border-white/20 hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,255,0.1)]'
             }`}
           >
             Home
@@ -155,8 +155,8 @@ const Navbar = () => {
             onClick={(e) => scrollToSection(e, 'about')}
             className={`px-4 py-2 transition-all duration-300 rounded-full ${
               activeSection === 'about' 
-                ? 'bg-white/10 text-white' 
-                : 'text-white/90 hover:text-white'
+                ? 'bg-white/10 text-white border border-white/20' 
+                : 'text-white/90 hover:text-white hover:bg-white/10 hover:border hover:border-white/20 hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,255,0.1)]'
             }`}
           >
             About Us
@@ -166,15 +166,15 @@ const Navbar = () => {
             onClick={(e) => scrollToSection(e, 'products')}
             className={`px-4 py-2 transition-all duration-300 rounded-full ${
               activeSection === 'products' 
-                ? 'bg-white/10 text-white' 
-                : 'text-white/90 hover:text-white'
+                ? 'bg-white/10 text-white border border-white/20' 
+                : 'text-white/90 hover:text-white hover:bg-white/10 hover:border hover:border-white/20 hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,255,0.1)]'
             }`}
           >
             Our Products
           </a>
           <Button 
             onClick={(e) => handleButtonClick(e, 'contact')}
-            className="w-full text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full py-2"
+            className="w-full text-white font-medium border border-white/20 backdrop-blur-md bg-blue-500/70 hover:bg-blue-600/70 transition-all duration-300 rounded-full py-2 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
             variant="ghost"
           >
             Register Now →

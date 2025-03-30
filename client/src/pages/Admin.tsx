@@ -13,7 +13,18 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, CheckCircle, Key, User } from 'lucide-react';
+import { AlertCircle, CheckCircle, Key, User, AlertTriangle, Download } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Define the login form schema
 const loginFormSchema = z.object({
@@ -349,10 +360,45 @@ const AdminDashboard = () => {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">
                   Total submissions: {contactSubmissions.length}
                 </p>
+                {contactSubmissions.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center gap-2"
+                    onClick={() => {
+                      // Create CSV content
+                      const headers = ["ID", "Name", "Email", "Phone", "Place", "Message", "Date"];
+                      const csvRows = [
+                        headers.join(','),
+                        ...contactSubmissions.map(s => [
+                          s.id,
+                          `"${s.name.replace(/"/g, '""')}"`,
+                          `"${s.email.replace(/"/g, '""')}"`,
+                          `"${s.phone.replace(/"/g, '""')}"`,
+                          `"${s.place.replace(/"/g, '""')}"`,
+                          `"${s.message.replace(/"/g, '""')}"`,
+                          `"${formatDate(s.createdAt)}"`
+                        ].join(','))
+                      ];
+                      const csvContent = csvRows.join('\n');
+                      
+                      // Create download link
+                      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.setAttribute('href', url);
+                      link.setAttribute('download', `contact_submissions_${new Date().toISOString().slice(0,10)}.csv`);
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-2" /> Export CSV
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           </TabsContent>
@@ -453,10 +499,23 @@ const CredentialsUpdateForm = ({ authHeader, setAuthHeader }: CredentialsUpdateF
     }
   });
   
-  // Handle credentials update form submission
+  // For confirmation dialog
+  const [formData, setFormData] = useState<UpdateCredentialsFormValues | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  
+  // Prepare for confirmation dialog
   const onUpdateCredentials = (data: UpdateCredentialsFormValues) => {
-    setUpdateSuccess(false);
-    updateCredentialsMutation.mutate(data);
+    setFormData(data);
+    setIsConfirmDialogOpen(true);
+  };
+  
+  // Actual submission after confirmation
+  const handleConfirmedUpdate = () => {
+    if (formData) {
+      setUpdateSuccess(false);
+      updateCredentialsMutation.mutate(formData);
+    }
+    setIsConfirmDialogOpen(false);
   };
   
   return (
@@ -468,6 +527,28 @@ const CredentialsUpdateForm = ({ authHeader, setAuthHeader }: CredentialsUpdateF
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Confirmation Dialog */}
+        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                Confirm Credential Update
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                You are about to change your admin credentials. This action cannot be undone. 
+                Make sure you remember your new username and password, as they will be required for future logins.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmedUpdate} className="bg-sky-600 hover:bg-sky-700">
+                Confirm Update
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
         <form onSubmit={credentialsForm.handleSubmit(onUpdateCredentials)} className="space-y-6 max-w-md">
           {updateSuccess && (
             <div className="p-4 mb-4 bg-green-50 border border-green-200 rounded-md flex items-center space-x-3 text-green-700">

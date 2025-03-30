@@ -286,6 +286,7 @@ const ProductsSection = () => {
                     <img 
                       src={panel.image} 
                       alt={panel.name} 
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                     />
                     {/* Image overlay gradient */}

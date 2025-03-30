@@ -109,6 +109,7 @@ const HeroSection = () => {
           src={owlImage} 
           alt="Owl on solar panel - OLGA Solar Energy" 
           className="w-full h-full object-cover"
+          fetchPriority="high"
         />
       </div>
       
