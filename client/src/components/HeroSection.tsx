@@ -1,53 +1,48 @@
-import { Button } from "@/components/ui/button";
-import owlImage from "@assets/evin1.png";
+import owlImage from "@assets/erik-karits-BF16q77A1MY-unsplash.jpg";
 
 const HeroSection = () => {
   return (
-    <section id="home" className="relative pt-24 h-screen flex items-center">
-      <div className="absolute inset-0 z-0">
-        {/* Background Image with Gradient Overlay */}
-        <div 
-          className="w-full h-full bg-[url('https://images.unsplash.com/photo-1557142046-c704a3266b2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&h=800&q=80')] bg-cover bg-center"
-          aria-label="Kerala landscape with greenery"
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-900/60 to-gray-900/80"></div>
+    <section id="home" className="h-screen w-full relative overflow-hidden">
+      {/* Background gradient - using the exact same gray as in the image */}
+      <div className="absolute inset-0 bg-[#C5C8C9] z-0"></div>
+      
+      {/* Navigation Links */}
+      <div className="relative z-10 pt-7 px-8 flex justify-between items-center">
+        <div className="flex space-x-10 text-white font-medium">
+          <a href="#home" className="hover:opacity-80 transition-opacity">Home</a>
+          <a href="#about" className="hover:opacity-80 transition-opacity">About Us</a>
+          <a href="#products" className="hover:opacity-80 transition-opacity">Our Products</a>
+          <a href="#blog" className="hover:opacity-80 transition-opacity">Blog</a>
+        </div>
+        <div>
+          <a href="#register" className="text-white font-medium hover:opacity-80 transition-opacity">Register</a>
         </div>
       </div>
       
-      <div className="container mx-auto px-4 z-10 text-white">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-          <div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-montserrat mb-4">
-              OLGA
-            </h1>
-            <p className="text-xl md:text-2xl font-light mb-6">
-              Powering Kerala for a Brighter Tomorrow.
-            </p>
-            <p className="text-lg mb-8">
+      {/* Main Hero Content */}
+      <div className="relative z-10 h-full flex items-center">
+        <div className="w-full flex justify-between px-8">
+          {/* Text content on the right */}
+          <div className="max-w-xs text-white self-end mb-32">
+            <p className="text-sm">
               Solar energy is one of the most abundant and sustainable resources available to us. Harness the power of the sun with OLGA.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                asChild
-                className="bg-[#008FD5] hover:bg-[#008FD5]/90 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-              >
-                <a href="#products">Explore Products</a>
-              </Button>
-              <Button 
-                asChild
-                variant="outline" 
-                className="border-2 border-white hover:bg-white hover:text-[#1E293B] text-white font-medium py-3 px-6 rounded-lg transition-colors"
-              >
-                <a href="#contact">Contact Us</a>
-              </Button>
-            </div>
           </div>
-          <div className="hidden md:block">
+          
+          {/* Image in the center - using the full image as background instead of showing it separately */}
+          <div className="absolute right-0 top-0 w-full h-full z-0">
             <img 
               src={owlImage} 
               alt="Owl on solar panel - OLGA Solar Energy" 
-              className="w-full max-w-md mx-auto"
+              className="w-full h-full object-cover"
+              style={{ opacity: 0.99 }} // This prevents the image from being 100% opaque
             />
+          </div>
+          
+          {/* Main text at the bottom */}
+          <div className="self-end mb-32 ml-8 z-10 relative">
+            <h1 className="text-white text-[120px] font-bold leading-none">OLGA</h1>
+            <p className="text-white text-xl">Powering Kerala for a Brighter Tomorrow.</p>
           </div>
         </div>
       </div>
