@@ -1,6 +1,7 @@
-import { Facebook, Twitter, Instagram, Linkedin, Send, ArrowUp } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Send, ArrowUp, ShieldCheck } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Link } from "wouter";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -85,9 +86,18 @@ const Footer = () => {
         
         {/* Copyright and Back to top */}
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} OLGA Solar. All rights reserved.
-          </p>
+          <div className="flex flex-col md:flex-row items-center">
+            <p className="text-gray-400 text-sm">
+              &copy; {new Date().getFullYear()} OLGA Solar. All rights reserved.
+            </p>
+            
+            <Link href="/admin">
+              <span className="flex items-center text-gray-500 hover:text-gray-300 text-xs ml-0 md:ml-4 mt-2 md:mt-0 transition-colors duration-300 cursor-pointer">
+                <ShieldCheck size={12} className="mr-1" />
+                Admin
+              </span>
+            </Link>
+          </div>
           
           <button 
             onClick={scrollToTop}

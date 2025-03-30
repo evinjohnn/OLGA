@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from "../components/ui/button";
+import { Skeleton } from "../components/ui/skeleton";
 
 interface Product {
   id: number;
@@ -64,9 +65,21 @@ const solarPanels: Product[] = [
 
 const ProductsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Simulate loading time for products
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Show loading state for 2 seconds
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   // Add auto scrolling animation
   useEffect(() => {
+    if (isLoading) return; // Don't activate scroll until products are loaded
+    
     const container = scrollContainerRef.current;
     if (!container) return;
     
@@ -114,7 +127,7 @@ const ProductsSection = () => {
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []);
+  }, [isLoading]);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -160,40 +173,67 @@ const ProductsSection = () => {
             className="flex overflow-x-auto gap-6 pb-6 snap-x scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {solarPanels.map((panel) => (
-              <div 
-                key={panel.id}
-                className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={panel.image} 
-                    alt={panel.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-bold text-xl text-gray-800 group-hover:text-sky-600 transition-colors duration-300">{panel.name}</h3>
-                    {panel.wattage && (
-                      <span className="bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full group-hover:bg-sky-200 transition-colors duration-300">
-                        {panel.wattage}
-                      </span>
-                    )}
+            {isLoading ? (
+              // Skeleton loaders when loading
+              Array(6).fill(0).map((_, index) => (
+                <div 
+                  key={index}
+                  className="flex-shrink-0 w-80 bg-white/50 rounded-xl overflow-hidden shadow-md snap-start animate-pulse"
+                >
+                  <div className="h-48 overflow-hidden">
+                    <Skeleton className="h-full w-full" />
                   </div>
-                  <p className="text-gray-600 text-sm mb-4">{panel.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-sky-600 group-hover:text-sky-700 transition-colors duration-300">{panel.price}</span>
-                    <Button 
-                      size="sm" 
-                      className="bg-sky-600 hover:bg-sky-700 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
-                    >
-                      Learn More
-                    </Button>
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-3">
+                      <Skeleton className="h-6 w-40" />
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </div>
+                    <Skeleton className="h-4 w-full mt-2" />
+                    <Skeleton className="h-4 w-5/6 mt-2 mb-4" />
+                    <div className="flex justify-between items-center">
+                      <Skeleton className="h-6 w-24" />
+                      <Skeleton className="h-9 w-28 rounded-md" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              // Actual products after loading
+              solarPanels.map((panel) => (
+                <div 
+                  key={panel.id}
+                  className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
+                >
+                  <div className="h-48 overflow-hidden">
+                    <img 
+                      src={panel.image} 
+                      alt={panel.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="font-bold text-xl text-gray-800 group-hover:text-sky-600 transition-colors duration-300">{panel.name}</h3>
+                      {panel.wattage && (
+                        <span className="bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full group-hover:bg-sky-200 transition-colors duration-300">
+                          {panel.wattage}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-gray-600 text-sm mb-4">{panel.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xl font-bold text-sky-600 group-hover:text-sky-700 transition-colors duration-300">{panel.price}</span>
+                      <Button 
+                        size="sm" 
+                        className="bg-sky-600 hover:bg-sky-700 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
+                      >
+                        Learn More
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
