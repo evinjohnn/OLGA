@@ -140,3 +140,25 @@
     opacity: 1;
   }
 }
+
+/* Solar-themed styles */
+.solar-grid-pattern {
+  background: 
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 3px rgba(255, 204, 0, 0.8));
+}
+
+/* Solar progress animation */
+@keyframes solarPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px 1px rgba(255, 204, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 10px 3px rgba(255, 204, 0, 0.9);
+  }
+}
