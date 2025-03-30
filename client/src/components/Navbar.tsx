@@ -50,16 +50,16 @@ const Navbar = () => {
   return (
     <nav 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'glass-dark py-3' : 'bg-transparent py-7'
+        scrolled ? 'py-3 backdrop-blur-sm' : 'bg-transparent py-6'
       }`}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
-        <div className="flex space-x-10 text-white font-medium">
+        <div className="flex space-x-10 text-white font-light">
           <a 
             href="#home" 
             onClick={(e) => scrollToSection(e, 'home')}
-            className={`hover:text-white transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all hover:after:w-full ${
-              activeSection === 'home' ? 'after:w-full text-white' : 'text-white/80'
+            className={`hover:text-white transition-all duration-300 ${
+              activeSection === 'home' ? 'text-white' : 'text-white/80'
             }`}
           >
             Home
@@ -67,8 +67,8 @@ const Navbar = () => {
           <a 
             href="#about" 
             onClick={(e) => scrollToSection(e, 'about')}
-            className={`hover:text-white transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all hover:after:w-full ${
-              activeSection === 'about' ? 'after:w-full text-white' : 'text-white/80'
+            className={`hover:text-white transition-all duration-300 ${
+              activeSection === 'about' ? 'text-white' : 'text-white/80'
             }`}
           >
             About Us
@@ -76,17 +76,17 @@ const Navbar = () => {
           <a 
             href="#products" 
             onClick={(e) => scrollToSection(e, 'products')}
-            className={`hover:text-white transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all hover:after:w-full ${
-              activeSection === 'products' ? 'after:w-full text-white' : 'text-white/80'
+            className={`hover:text-white transition-all duration-300 ${
+              activeSection === 'products' ? 'text-white' : 'text-white/80'
             }`}
           >
             Our Products
           </a>
           <a 
             href="#blog" 
-            onClick={(e) => scrollToSection(e, 'contact')} // Redirecting to contact for now
-            className={`hover:text-white transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all hover:after:w-full ${
-              activeSection === 'blog' ? 'after:w-full text-white' : 'text-white/80'
+            onClick={(e) => scrollToSection(e, 'blog')}
+            className={`hover:text-white transition-all duration-300 ${
+              activeSection === 'blog' ? 'text-white' : 'text-white/80'
             }`}
           >
             Blog
@@ -94,7 +94,8 @@ const Navbar = () => {
         </div>
         <Button 
           onClick={(e) => scrollToSection(e as any, 'contact')}
-          className="btn-glow bg-gradient-to-r from-sky-600 to-blue-800 text-white hover:bg-gradient-to-r hover:from-sky-700 hover:to-blue-900 rounded-full px-6 py-2 transition-all duration-300"
+          className="text-white font-normal hover:bg-white/10 transition-all duration-300 rounded-md px-5 py-1"
+          variant="ghost"
         >
           Register
         </Button>

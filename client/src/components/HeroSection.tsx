@@ -103,51 +103,40 @@ const HeroSection = () => {
   
   return (
     <section id="home" className="h-screen w-full relative overflow-hidden">
-      {/* Background with semi-transparent overlay */}
+      {/* Background image only, no overlay */}
       <div className="absolute inset-0 z-0">
         <img 
           src={owlImage} 
           alt="Owl on solar panel - OLGA Solar Energy" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-gray-500/20 to-black/40"></div>
-        
-        {/* Particle animation canvas */}
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 z-10 pointer-events-none"
-        />
       </div>
       
-      {/* Main Hero Content */}
-      <div className="relative z-20 h-full flex flex-col justify-between pt-32 pb-16">
-        {/* Solar energy quote - moved to top */}
-        <div className="w-full px-8">
-          <div className="max-w-md mx-auto md:mx-0 text-white glass-dark p-4 rounded-lg mt-20 md:mt-12 md:ml-12">
-            <p className="text-sm md:text-base">
+      {/* Subtle particle animation */}
+      <canvas 
+        ref={canvasRef} 
+        className="absolute inset-0 z-10 pointer-events-none opacity-30"
+      />
+      
+      {/* Minimal Hero Content */}
+      <div className="relative z-20 h-full container mx-auto px-6 flex flex-col justify-between">
+        {/* Top navigation area - empty for spacing */}
+        <div className="h-24"></div>
+        
+        {/* Main content flex layout */}
+        <div className="flex flex-col md:flex-row justify-between items-start">
+          {/* OLGA text on the left/bottom */}
+          <div className="md:mt-auto pb-12 md:pb-28">
+            <h1 className="hero-title text-white">OLGA</h1>
+            <p className="hero-subtitle text-white text-lg md:text-xl mt-1">Powering Kerala for a Brighter Tomorrow.</p>
+          </div>
+          
+          {/* Solar energy text on the right */}
+          <div className="md:self-end max-w-xs mt-auto pb-16 md:pb-28">
+            <p className="text-white text-sm leading-relaxed">
               Solar energy is one of the most abundant and sustainable resources available to us. Harness the power of the sun with OLGA.
             </p>
           </div>
-        </div>
-        
-        {/* Main OLGA text */}
-        <div className="w-full px-8 pb-16">
-          <div className="mb-8 md:mb-0">
-            <h1 className="text-white text-[100px] md:text-[150px] font-bold leading-none tracking-wide drop-shadow-lg">OLGA</h1>
-            <p className="text-white text-xl mt-2 drop-shadow-md">Powering Kerala for a Brighter Tomorrow.</p>
-            <Button 
-              onClick={() => scrollDown()}
-              className="btn-glow mt-6 bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-600 hover:to-blue-700"
-            >
-              Learn More
-            </Button>
-          </div>
-        </div>
-        
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center animate-bounce">
-          <span className="text-sm mb-1">Scroll Down</span>
-          <ChevronDown className="h-5 w-5" />
         </div>
       </div>
     </section>
