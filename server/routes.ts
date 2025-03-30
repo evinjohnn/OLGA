@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSubmissionSchema } from "../shared/schema";
+import { insertContactSubmissionSchema, updateCredentialsSchema } from "../shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { z } from "zod";
@@ -135,6 +135,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         message: "Failed to fetch contact submissions"
       });
+    }
+  });
+
+  // API endpoint to update admin credentials (protected route)
+  app.post("/api/admin/update-credentials", authenticateAdmin, async (req, res) => {
+    try {
+      // Validate credential update data
+      const updateData = updateCredentialsSchema.parse(req.body);
+      
+      // Update admin credentials
+      const updatedUser = await storage.updateAdminCredentials(
+        updateData.currentUsername,
+        updateData.currentPassword,
+        updateData.newUsername,
+        updateData.newPassword
+      );
+      
+      if (updatedUser) {
+        // Return success response
+        res.status(200).json({
+          success: true,
+          message: "Admin credentials updated successfully",
+          data: {
+            id: updatedUser.id,
+            username: updatedUser.username,
+            isAdmin: updatedUser.isAdmin
+          }
+        });
+      } else {
+        // Return error if update failed
+        res.status(400).json({
+          success: false,
+          message: "Failed to update credentials. Please verify your current credentials or choose a different username."
+        });
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        res.status(400).json({ 
+          success: false, 
+          message: validationError.message 
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: "Failed to update admin credentials"
+        });
+      }
     }
   });
 

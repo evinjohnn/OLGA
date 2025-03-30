@@ -41,11 +41,56 @@ const Footer = () => {
           <div className="col-span-1">
             <h3 className="font-bold text-lg mb-6">Our Services</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Solar Panel Installation</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Energy Assessments</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Maintenance & Support</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Consultation Services</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition duration-300">Commercial Solutions</a></li>
+              <li>
+                <a 
+                  href={`https://wa.me/917736029821?text=${encodeURIComponent("Hello OLGA Solar, I'm interested in your Solar Panel Installation service. Please provide more information.")}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition duration-300 flex items-center"
+                >
+                  Solar Panel Installation
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={`https://wa.me/917736029821?text=${encodeURIComponent("Hello OLGA Solar, I'm interested in your Energy Assessments service. Please provide more information.")}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition duration-300 flex items-center"
+                >
+                  Energy Assessments
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={`https://wa.me/917736029821?text=${encodeURIComponent("Hello OLGA Solar, I'm interested in your Maintenance & Support service. Please provide more information.")}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition duration-300 flex items-center"
+                >
+                  Maintenance & Support
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={`https://wa.me/917736029821?text=${encodeURIComponent("Hello OLGA Solar, I'm interested in your Consultation Services. Please provide more information.")}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition duration-300 flex items-center"
+                >
+                  Consultation Services
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={`https://wa.me/917736029821?text=${encodeURIComponent("Hello OLGA Solar, I'm interested in your Commercial Solutions. Please provide more information.")}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition duration-300 flex items-center"
+                >
+                  Commercial Solutions
+                </a>
+              </li>
             </ul>
           </div>
           

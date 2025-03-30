@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AlertCircle, CheckCircle, Key, User } from 'lucide-react';
 
 // Define the login form schema
 const loginFormSchema = z.object({
@@ -21,6 +22,16 @@ const loginFormSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
+
+// Define the credentials update form schema
+const updateCredentialsSchema = z.object({
+  currentUsername: z.string().min(1, "Current username is required"),
+  currentPassword: z.string().min(1, "Current password is required"),
+  newUsername: z.string().min(3, "New username must be at least 3 characters"),
+  newPassword: z.string().min(6, "New password must be at least 6 characters")
+});
+
+type UpdateCredentialsFormValues = z.infer<typeof updateCredentialsSchema>;
 
 // Admin user type
 interface AdminUser {
@@ -260,9 +271,10 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="submissions" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+          <TabsList className="grid w-full max-w-md grid-cols-3 mb-8">
             <TabsTrigger value="submissions">Contact Submissions</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="submissions" className="space-y-4">
@@ -365,9 +377,191 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          
+          <TabsContent value="settings">
+            <CredentialsUpdateForm authHeader={authHeader} setAuthHeader={setAuthHeader} />
+          </TabsContent>
         </Tabs>
       </main>
     </div>
+  );
+};
+
+// CredentialsUpdateForm component
+interface CredentialsUpdateFormProps {
+  authHeader: string | null;
+  setAuthHeader: (header: string | null) => void;
+}
+
+const CredentialsUpdateForm = ({ authHeader, setAuthHeader }: CredentialsUpdateFormProps) => {
+  const { toast } = useToast();
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  
+  // Credentials update form
+  const credentialsForm = useForm<UpdateCredentialsFormValues>({
+    resolver: zodResolver(updateCredentialsSchema),
+    defaultValues: {
+      currentUsername: "",
+      currentPassword: "",
+      newUsername: "",
+      newPassword: ""
+    }
+  });
+  
+  // Update credentials mutation
+  const updateCredentialsMutation = useMutation({
+    mutationFn: async (data: UpdateCredentialsFormValues) => {
+      if (!authHeader) throw new Error("Not authenticated");
+      
+      return await apiRequest({
+        url: '/api/admin/update-credentials',
+        method: 'POST',
+        body: data,
+        headers: {
+          'Authorization': authHeader
+        }
+      });
+    },
+    onSuccess: (data: any) => {
+      if (data && data.success) {
+        // Create new auth header with new credentials
+        const authHeader = `Basic ${btoa(`${credentialsForm.getValues().newUsername}:${credentialsForm.getValues().newPassword}`)}`;
+        setAuthHeader(authHeader);
+        setUpdateSuccess(true);
+        
+        toast({
+          title: "Credentials updated",
+          description: "Your admin credentials have been successfully updated.",
+        });
+        
+        // Reset form
+        credentialsForm.reset();
+      } else {
+        toast({
+          title: "Update failed",
+          description: data?.message || "Failed to update credentials. Please try again.",
+          variant: "destructive",
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update failed",
+        description: error.message || "Failed to update credentials. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Handle credentials update form submission
+  const onUpdateCredentials = (data: UpdateCredentialsFormValues) => {
+    setUpdateSuccess(false);
+    updateCredentialsMutation.mutate(data);
+  };
+  
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Admin Settings</CardTitle>
+        <CardDescription>
+          Update your administrator credentials
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={credentialsForm.handleSubmit(onUpdateCredentials)} className="space-y-6 max-w-md">
+          {updateSuccess && (
+            <div className="p-4 mb-4 bg-green-50 border border-green-200 rounded-md flex items-center space-x-3 text-green-700">
+              <CheckCircle className="h-5 w-5" />
+              <p>Credentials updated successfully!</p>
+            </div>
+          )}
+          
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium flex items-center gap-2 text-sky-700">
+              <User className="h-5 w-5" />
+              Current Credentials
+            </h3>
+            <div className="space-y-4 bg-gray-50 p-4 rounded-md">
+              <div className="space-y-2">
+                <Label htmlFor="currentUsername">Current Username</Label>
+                <Input 
+                  id="currentUsername"
+                  type="text"
+                  {...credentialsForm.register("currentUsername")}
+                />
+                {credentialsForm.formState.errors.currentUsername && (
+                  <p className="text-sm text-red-500">{credentialsForm.formState.errors.currentUsername.message}</p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">Current Password</Label>
+                <Input 
+                  id="currentPassword"
+                  type="password"
+                  {...credentialsForm.register("currentPassword")}
+                />
+                {credentialsForm.formState.errors.currentPassword && (
+                  <p className="text-sm text-red-500">{credentialsForm.formState.errors.currentPassword.message}</p>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium flex items-center gap-2 text-sky-700">
+              <Key className="h-5 w-5" />
+              New Credentials
+            </h3>
+            <div className="space-y-4 bg-gray-50 p-4 rounded-md">
+              <div className="space-y-2">
+                <Label htmlFor="newUsername">New Username</Label>
+                <Input 
+                  id="newUsername"
+                  type="text"
+                  {...credentialsForm.register("newUsername")}
+                />
+                {credentialsForm.formState.errors.newUsername && (
+                  <p className="text-sm text-red-500">{credentialsForm.formState.errors.newUsername.message}</p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input 
+                  id="newPassword"
+                  type="password"
+                  {...credentialsForm.register("newPassword")}
+                />
+                {credentialsForm.formState.errors.newPassword && (
+                  <p className="text-sm text-red-500">{credentialsForm.formState.errors.newPassword.message}</p>
+                )}
+                <p className="text-xs text-gray-500">
+                  Password must be at least 6 characters long
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t pt-4">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="h-4 w-4 text-amber-500" />
+              <p className="text-sm text-amber-700">
+                Make sure to remember your new credentials as they will be required for future logins.
+              </p>
+            </div>
+          </div>
+        
+          <Button 
+            type="submit" 
+            className="w-full bg-sky-600 hover:bg-sky-700"
+            disabled={updateCredentialsMutation.isPending}
+          >
+            {updateCredentialsMutation.isPending ? "Updating..." : "Update Credentials"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

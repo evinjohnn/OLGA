@@ -9,6 +9,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   verifyAdminUser(username: string, password: string): Promise<User | undefined>;
+  updateAdminCredentials(currentUsername: string, currentPassword: string, newUsername: string, newPassword: string): Promise<User | undefined>;
   
   // Contact form methods
   saveContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
@@ -83,6 +84,29 @@ export class MemStorage implements IStorage {
   async getAllContactSubmissions(): Promise<ContactSubmission[]> {
     return Array.from(this.contactSubmissions.values());
   }
+  
+  async updateAdminCredentials(currentUsername: string, currentPassword: string, newUsername: string, newPassword: string): Promise<User | undefined> {
+    // Verify current credentials
+    const user = await this.verifyAdminUser(currentUsername, currentPassword);
+    
+    if (!user) {
+      return undefined; // Current credentials invalid
+    }
+    
+    // Check if new username already exists (and it's not the current user)
+    if (currentUsername !== newUsername) {
+      const existingUser = await this.getUserByUsername(newUsername);
+      if (existingUser) {
+        return undefined; // Username already taken
+      }
+    }
+    
+    // Update credentials
+    const updatedUser = { ...user, username: newUsername, password: newPassword };
+    this.users.set(user.id, updatedUser);
+    
+    return updatedUser;
+  }
 }
 
 // Database storage implementation
@@ -155,6 +179,35 @@ export class DatabaseStorage implements IStorage {
   
   async getAllContactSubmissions(): Promise<ContactSubmission[]> {
     return await db.select().from(contactSubmissions);
+  }
+  
+  async updateAdminCredentials(currentUsername: string, currentPassword: string, newUsername: string, newPassword: string): Promise<User | undefined> {
+    // Verify current credentials
+    const user = await this.verifyAdminUser(currentUsername, currentPassword);
+    
+    if (!user) {
+      return undefined; // Current credentials invalid
+    }
+    
+    // Check if new username already exists (and it's not the current user)
+    if (currentUsername !== newUsername) {
+      const existingUser = await this.getUserByUsername(newUsername);
+      if (existingUser) {
+        return undefined; // Username already taken
+      }
+    }
+    
+    // Update credentials in database
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        username: newUsername,
+        password: newPassword
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+    
+    return updatedUser;
   }
 }
 

@@ -212,10 +212,12 @@ const ProductsSection = () => {
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <h2 className="text-4xl font-bold mb-3 text-white">Our Products</h2>
-        <p className="text-gray-200 mb-12 max-w-2xl">
-          Discover our range of high-quality solar panels designed to meet various energy needs for homes and businesses across Kerala.
-        </p>
+        <div className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow-xl mb-8">
+          <h2 className="text-4xl font-bold mb-3 text-gray-800">Our Products</h2>
+          <p className="text-gray-700 max-w-2xl">
+            Discover our range of high-quality solar panels designed to meet various energy needs for homes and businesses across Kerala.
+          </p>
+        </div>
         
         <div className="relative">
           {/* Visual drag hint */}
@@ -246,7 +248,8 @@ const ProductsSection = () => {
           {/* Scrollable container */}
           <div 
             ref={scrollContainerRef}
-            className={`flex overflow-x-auto gap-6 pb-6 snap-x custom-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
+            className="flex overflow-x-auto gap-6 pb-6 snap-x cursor-grab scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {isLoading ? (
               // Skeleton loaders when loading
