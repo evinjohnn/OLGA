@@ -163,30 +163,30 @@ const ProductsSection = () => {
             {solarPanels.map((panel) => (
               <div 
                 key={panel.id}
-                className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
               >
                 <div className="h-48 overflow-hidden">
                   <img 
                     src={panel.image} 
                     alt={panel.name} 
-                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                   />
                 </div>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-bold text-xl text-gray-800">{panel.name}</h3>
+                    <h3 className="font-bold text-xl text-gray-800 group-hover:text-sky-600 transition-colors duration-300">{panel.name}</h3>
                     {panel.wattage && (
-                      <span className="bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full">
+                      <span className="bg-sky-100 text-sky-800 text-xs px-2 py-1 rounded-full group-hover:bg-sky-200 transition-colors duration-300">
                         {panel.wattage}
                       </span>
                     )}
                   </div>
                   <p className="text-gray-600 text-sm mb-4">{panel.description}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-sky-600">{panel.price}</span>
+                    <span className="text-xl font-bold text-sky-600 group-hover:text-sky-700 transition-colors duration-300">{panel.price}</span>
                     <Button 
                       size="sm" 
-                      className="bg-sky-600 hover:bg-sky-700 transition-all duration-300 transform hover:scale-105"
+                      className="bg-sky-600 hover:bg-sky-700 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
                     >
                       Learn More
                     </Button>

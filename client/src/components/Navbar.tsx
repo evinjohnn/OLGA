@@ -59,11 +59,11 @@ const Navbar = () => {
             Our Products
           </a>
           <a 
-            href="#contact" 
-            onClick={(e) => scrollToSection(e, 'contact')}
+            href="#blog" 
+            onClick={(e) => scrollToSection(e, 'contact')} // Redirecting to contact for now
             className="hover:text-white transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all hover:after:w-full"
           >
-            Contact
+            Blog
           </a>
         </div>
         <Button 

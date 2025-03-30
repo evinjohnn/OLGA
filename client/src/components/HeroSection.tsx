@@ -16,18 +16,16 @@ const HeroSection = () => {
       </div>
       
       {/* Main Hero Content */}
-      <div className="relative z-10 h-full flex flex-col">
-        <div className="flex-grow"></div>
-        
-        <div className="w-full flex justify-between items-center px-8 pb-32">
+      <div className="relative z-10 h-full flex flex-col justify-end">
+        <div className="w-full flex justify-between items-end px-8 pb-32">
           {/* Main OLGA text */}
-          <div className="self-end">
-            <h1 className="text-white text-[120px] font-bold leading-none">OLGA</h1>
+          <div>
+            <h1 className="text-white text-[150px] font-bold leading-none tracking-wide">OLGA</h1>
             <p className="text-white text-xl mt-2">Powering Kerala for a Brighter Tomorrow.</p>
           </div>
           
           {/* Text content on the right */}
-          <div className="max-w-xs text-white">
+          <div className="max-w-xs text-white mb-16">
             <p className="text-sm">
               Solar energy is one of the most abundant and sustainable resources available to us. Harness the power of the sun with OLGA.
             </p>
