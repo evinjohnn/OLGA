@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MousePointerClick, Move } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
 
@@ -66,6 +66,8 @@ const solarPanels: Product[] = [
 const ProductsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showDragHint, setShowDragHint] = useState(true);
   
   // Simulate loading time for products
   useEffect(() => {
@@ -75,6 +77,13 @@ const ProductsSection = () => {
     
     return () => clearTimeout(timer);
   }, []);
+  
+  // Hide drag hint after user has interacted with the carousel
+  useEffect(() => {
+    if (isDragging) {
+      setShowDragHint(false);
+    }
+  }, [isDragging]);
   
   // Add auto scrolling animation
   useEffect(() => {
@@ -86,12 +95,14 @@ const ProductsSection = () => {
     let animationId: number;
     let isPaused = false;
     let startX = 0;
+    let startScrollLeft = 0;
+    let isMouseDown = false;
     
     const scrollSpeed = 0.5; // pixels per frame
     let currentScrollPosition = 0;
     
     const animate = () => {
-      if (!isPaused && container) {
+      if (!isPaused && container && !isMouseDown) {
         currentScrollPosition += scrollSpeed;
         if (currentScrollPosition >= container.scrollWidth - container.clientWidth) {
           currentScrollPosition = 0;
@@ -105,27 +116,73 @@ const ProductsSection = () => {
     animationId = requestAnimationFrame(animate);
     
     // Pause on hover/touch
-    const handleMouseEnter = () => { isPaused = true; };
-    const handleMouseLeave = () => { isPaused = false; };
+    const handleMouseEnter = () => { 
+      isPaused = true; 
+    };
+    
+    const handleMouseLeave = () => { 
+      isPaused = false;
+      setIsDragging(false);
+    };
+    
     const handleTouchStart = (e: TouchEvent) => {
       isPaused = true;
       startX = e.touches[0].pageX;
+      startScrollLeft = container.scrollLeft;
+      setIsDragging(true);
     };
+    
     const handleTouchEnd = () => {
       isPaused = false;
+      setIsDragging(false);
+    };
+    
+    const handleMouseDown = (e: MouseEvent) => {
+      isPaused = true;
+      isMouseDown = true;
+      startX = e.pageX;
+      startScrollLeft = container.scrollLeft;
+      container.style.cursor = 'grabbing';
+      setIsDragging(true);
+    };
+    
+    const handleMouseUp = () => {
+      isMouseDown = false;
+      container.style.cursor = 'grab';
+      setIsDragging(false);
+    };
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isMouseDown) return;
+      e.preventDefault();
+      const x = e.pageX;
+      const walk = (x - startX) * 2; // Scroll speed multiplier
+      container.scrollLeft = startScrollLeft - walk;
     };
     
     container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mouseleave', handleMouseLeave);
     container.addEventListener('touchstart', handleTouchStart);
     container.addEventListener('touchend', handleTouchEnd);
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mousemove', handleMouseMove);
+    
+    // Auto-hide drag hint after 5 seconds even if user hasn't interacted
+    const hintTimer = setTimeout(() => {
+      setShowDragHint(false);
+    }, 5000);
     
     return () => {
       cancelAnimationFrame(animationId);
+      clearTimeout(hintTimer);
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mousemove', handleMouseMove);
     };
   }, [isLoading]);
 
@@ -142,7 +199,7 @@ const ProductsSection = () => {
   };
 
   return (
-    <section id="products" className="py-20 bg-sky-50">
+    <section id="products" className="py-20">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold mb-3 text-gray-800">Our Products</h2>
         <p className="text-gray-600 mb-12 max-w-2xl">
@@ -150,10 +207,18 @@ const ProductsSection = () => {
         </p>
         
         <div className="relative">
+          {/* Visual drag hint */}
+          {showDragHint && !isLoading && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-black/70 text-white px-4 py-3 rounded-lg flex items-center space-x-2 animate-pulse shadow-lg">
+              <Move className="h-5 w-5" />
+              <span>Drag to explore all products</span>
+            </div>
+          )}
+          
           {/* Navigation arrows */}
           <button 
             onClick={scrollLeft}
-            className="absolute -left-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-100 transition-transform duration-300 hover:scale-110"
+            className="absolute -left-4 top-1/2 transform -translate-y-1/2 glass p-3 rounded-full shadow-lg z-10 hover:bg-white/40 transition-all duration-300 hover:scale-110"
             aria-label="Scroll left"
           >
             <ChevronLeft className="h-6 w-6 text-sky-600" />
@@ -161,7 +226,7 @@ const ProductsSection = () => {
           
           <button 
             onClick={scrollRight}
-            className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg z-10 hover:bg-gray-100 transition-transform duration-300 hover:scale-110"
+            className="absolute -right-4 top-1/2 transform -translate-y-1/2 glass p-3 rounded-full shadow-lg z-10 hover:bg-white/40 transition-all duration-300 hover:scale-110"
             aria-label="Scroll right"
           >
             <ChevronRight className="h-6 w-6 text-sky-600" />
@@ -170,15 +235,14 @@ const ProductsSection = () => {
           {/* Scrollable container */}
           <div 
             ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-6 pb-6 snap-x scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className={`flex overflow-x-auto gap-6 pb-6 snap-x custom-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing' : ''}`}
           >
             {isLoading ? (
               // Skeleton loaders when loading
               Array(6).fill(0).map((_, index) => (
                 <div 
                   key={index}
-                  className="flex-shrink-0 w-80 bg-white/50 rounded-xl overflow-hidden shadow-md snap-start animate-pulse"
+                  className="flex-shrink-0 w-80 glass-card rounded-xl overflow-hidden shadow-md snap-start animate-pulse"
                 >
                   <div className="h-48 overflow-hidden">
                     <Skeleton className="h-full w-full" />
@@ -202,14 +266,20 @@ const ProductsSection = () => {
               solarPanels.map((panel) => (
                 <div 
                   key={panel.id}
-                  className="flex-shrink-0 w-80 bg-white rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
+                  className="flex-shrink-0 w-80 glass-card rounded-xl overflow-hidden shadow-lg snap-start hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
                 >
-                  <div className="h-48 overflow-hidden">
+                  <div className="h-48 overflow-hidden relative group">
                     <img 
                       src={panel.image} 
                       alt={panel.name} 
                       className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                     />
+                    {/* Image overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {/* Click hint */}
+                    <div className="absolute bottom-3 right-3 bg-white/90 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <MousePointerClick className="h-4 w-4 text-sky-600" />
+                    </div>
                   </div>
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-3">
@@ -225,7 +295,7 @@ const ProductsSection = () => {
                       <span className="text-xl font-bold text-sky-600 group-hover:text-sky-700 transition-colors duration-300">{panel.price}</span>
                       <Button 
                         size="sm" 
-                        className="bg-sky-600 hover:bg-sky-700 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
+                        className="btn-glow bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-600 hover:to-blue-700"
                       >
                         Learn More
                       </Button>
