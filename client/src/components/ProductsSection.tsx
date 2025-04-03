@@ -203,104 +203,139 @@ const ProductsSection = () => {
     }
   }, [isDragging]);
   
-  // Add auto scrolling animation
+  // Fixed scrolling implementation
   useEffect(() => {
     if (isLoading) return; // Don't activate scroll until products are loaded
     
     const container = scrollContainerRef.current;
     if (!container) return;
     
-    let animationId: number;
-    let isPaused = false;
     let startX = 0;
+    let startY = 0;
     let startScrollLeft = 0;
-    let isMouseDown = false;
-    
-    const scrollSpeed = 0.5; // pixels per frame
-    let currentScrollPosition = 0;
-    
-    const animate = () => {
-      if (!isPaused && container && !isMouseDown) {
-        currentScrollPosition += scrollSpeed;
-        if (currentScrollPosition >= container.scrollWidth - container.clientWidth) {
-          currentScrollPosition = 0;
-        }
-        container.scrollLeft = currentScrollPosition;
-      }
-      animationId = requestAnimationFrame(animate);
-    };
-    
-    // Start animation
-    animationId = requestAnimationFrame(animate);
-    
-    // Pause on hover/touch
-    const handleMouseEnter = () => { 
-      isPaused = true; 
-    };
-    
-    const handleMouseLeave = () => { 
-      isPaused = false;
-      setIsDragging(false);
-    };
-    
-    const handleTouchStart = (e: TouchEvent) => {
-      isPaused = true;
-      startX = e.touches[0].pageX;
-      startScrollLeft = container.scrollLeft;
-      setIsDragging(true);
-    };
-    
-    const handleTouchEnd = () => {
-      isPaused = false;
-      setIsDragging(false);
-    };
-    
-    const handleMouseDown = (e: MouseEvent) => {
-      isPaused = true;
-      isMouseDown = true;
-      startX = e.pageX;
-      startScrollLeft = container.scrollLeft;
-      container.style.cursor = 'grabbing';
-      setIsDragging(true);
-    };
-    
-    const handleMouseUp = () => {
-      isMouseDown = false;
-      container.style.cursor = 'grab';
-      setIsDragging(false);
-    };
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isMouseDown) return;
-      e.preventDefault();
-      const x = e.pageX;
-      const walk = (x - startX) * 2; // Scroll speed multiplier
-      container.scrollLeft = startScrollLeft - walk;
-    };
-    
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-    container.addEventListener('touchstart', handleTouchStart);
-    container.addEventListener('touchend', handleTouchEnd);
-    container.addEventListener('mousedown', handleMouseDown);
-    container.addEventListener('mouseup', handleMouseUp);
-    container.addEventListener('mousemove', handleMouseMove);
+    let isDown = false;
     
     // Auto-hide drag hint after 5 seconds even if user hasn't interacted
     const hintTimer = setTimeout(() => {
       setShowDragHint(false);
     }, 5000);
     
+    // Mouse event handlers
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      container.classList.add('active');
+      startX = e.pageX;
+      startY = e.pageY;
+      startScrollLeft = container.scrollLeft;
+      setIsDragging(true);
+      container.style.cursor = 'grabbing';
+      container.style.userSelect = 'none';
+    };
+    
+    const onMouseLeave = () => {
+      isDown = false;
+      container.classList.remove('active');
+      setIsDragging(false);
+      container.style.cursor = 'grab';
+      container.style.removeProperty('user-select');
+    };
+    
+    const onMouseUp = () => {
+      isDown = false;
+      container.classList.remove('active');
+      setIsDragging(false);
+      container.style.cursor = 'grab';
+      container.style.removeProperty('user-select');
+    };
+    
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      
+      const x = e.pageX;
+      const y = e.pageY;
+      
+      // Calculate both horizontal and vertical movements
+      const walkX = (x - startX) * 2;
+      const walkY = y - startY;
+      
+      // If vertical movement is greater than horizontal, 
+      // don't scroll horizontally to allow normal page scrolling
+      if (Math.abs(walkY) > Math.abs(walkX)) return;
+      
+      container.scrollLeft = startScrollLeft - walkX;
+    };
+    
+    // Touch event handlers
+    const onTouchStart = (e: TouchEvent) => {
+      isDown = true;
+      container.classList.add('active');
+      startX = e.touches[0].pageX;
+      startY = e.touches[0].pageY;
+      startScrollLeft = container.scrollLeft;
+      setIsDragging(true);
+    };
+    
+    const onTouchEnd = () => {
+      isDown = false;
+      container.classList.remove('active');
+      setIsDragging(false);
+    };
+    
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDown) return;
+      
+      const x = e.touches[0].pageX;
+      const y = e.touches[0].pageY;
+      
+      // Calculate both horizontal and vertical movements
+      const walkX = (x - startX) * 1.5;
+      const walkY = y - startY;
+      
+      // If vertical movement is greater than horizontal, 
+      // don't scroll horizontally to allow normal page scrolling
+      if (Math.abs(walkY) > Math.abs(walkX)) return;
+      
+      // Prevent page scrolling when horizontally scrolling the carousel
+      e.preventDefault();
+      
+      container.scrollLeft = startScrollLeft - walkX;
+    };
+    
+    // Wheel event handler for horizontal scrolling
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    };
+    
+    // Add event listeners
+    container.addEventListener('mousedown', onMouseDown);
+    container.addEventListener('mouseleave', onMouseLeave);
+    container.addEventListener('mouseup', onMouseUp);
+    container.addEventListener('mousemove', onMouseMove);
+    
+    container.addEventListener('touchstart', onTouchStart, { passive: false });
+    container.addEventListener('touchend', onTouchEnd);
+    container.addEventListener('touchmove', onTouchMove, { passive: false });
+    
+    container.addEventListener('wheel', onWheel, { passive: false });
+    
     return () => {
-      cancelAnimationFrame(animationId);
       clearTimeout(hintTimer);
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchend', handleTouchEnd);
-      container.removeEventListener('mousedown', handleMouseDown);
-      container.removeEventListener('mouseup', handleMouseUp);
-      container.removeEventListener('mousemove', handleMouseMove);
+      
+      // Clean up event listeners
+      container.removeEventListener('mousedown', onMouseDown);
+      container.removeEventListener('mouseleave', onMouseLeave);
+      container.removeEventListener('mouseup', onMouseUp);
+      container.removeEventListener('mousemove', onMouseMove);
+      
+      container.removeEventListener('touchstart', onTouchStart);
+      container.removeEventListener('touchend', onTouchEnd);
+      container.removeEventListener('touchmove', onTouchMove);
+      
+      container.removeEventListener('wheel', onWheel);
     };
   }, [isLoading]);
 
@@ -527,7 +562,11 @@ const ProductsSection = () => {
           <div 
             ref={scrollContainerRef}
             className="flex overflow-x-auto gap-6 pb-6 snap-x cursor-grab scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            style={{ 
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none', 
+              WebkitOverflowScrolling: 'touch' // Enable smooth scrolling on iOS
+            }}
           >
             {isLoading ? (
               // Skeleton loaders when loading
